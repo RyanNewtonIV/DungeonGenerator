@@ -327,12 +327,13 @@ if __name__ == '__main__':
 
     rand = random.Random()
     seed = rand.randint(0, 100000)
-    width = 150
-    height = 150
+    width = 1000
+    height = 60
+    openNess = 0.55
     smoothStep = 5
     minRoomSize = 10
     entryPoints = [[rand.randint(0, width - 1), 0],
                    [rand.randint(0, width - 1), height - 1],
                    [width - 1, rand.randint(0, height - 1)],
                    [0, rand.randint(0, height - 1)]]
-    a = CaveMap("TestMap", seed, width, height, 4, 3, 0.5, smoothStep, minRoomSize, entryPoints)
+    a = CaveMap("TestMap", seed, width, height, 4, 3, openNess, smoothStep, minRoomSize, entryPoints)
