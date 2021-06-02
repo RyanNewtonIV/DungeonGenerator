@@ -327,8 +327,8 @@ if __name__ == '__main__':
 
     rand = random.Random()
     seed = rand.randint(0, 100000)
-    width = 100
-    height = 100
+    width = 150
+    height = 150
     smoothStep = 5
     minRoomSize = 10
     entryPoints = [[rand.randint(0, width - 1), 0],
