@@ -46,6 +46,7 @@ class GameMap():
         self.randomNumberGenerator.seed(self.seed)
 
     def initializeEmptyMap(self):
+        self.cellMap = []
         for i in range (self.width):
             tempMap = []
             for j in range (self.height):
@@ -86,6 +87,7 @@ class GameMap():
         mapOutput = open((fileName+".txt"),"w",encoding="utf-8")
         output = self.printMap()
         mapOutput.write(output)
+        mapOutput.close()
 
     def mapEntryPoints(self):
         for i in range(len(self.entryPoints)):
@@ -94,20 +96,13 @@ class GameMap():
 
 
 class CaveMap(GameMap):
-    mapName = None
-    seed = None
-    height = None
-    width = None
     birthLimit = None
     deathLimit = None
     openChance = None
     smoothSteps = None
-    cellMap = []
     minHoleSize = None
     holeSize = 0
     holeSizesMap = []
-    entryPoints = []
-    randomNumberGenerator = None
 
     def __init__(self, mapName, seed, width, height, birthLimit, deathLimit, openChance, smoothSteps, minHoleSize, entryPoints):
         super().__init__(mapName,seed,width,height,entryPoints)
