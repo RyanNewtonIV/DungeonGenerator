@@ -325,6 +325,7 @@ class CaveMap():
 
 if __name__ == '__main__':
 
+    timeKepper = time.time()
     rand = random.Random()
     seed = rand.randint(0, 100000)
     width = 1000
@@ -337,3 +338,4 @@ if __name__ == '__main__':
                    [width - 1, rand.randint(0, height - 1)],
                    [0, rand.randint(0, height - 1)]]
     a = CaveMap("TestMap", seed, width, height, 4, 3, openNess, smoothStep, minRoomSize, entryPoints)
+    print("Process took: ",str(time.time()-timeKepper)," seconds to complete...")
