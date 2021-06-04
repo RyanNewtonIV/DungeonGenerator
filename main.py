@@ -24,3 +24,4 @@ if __name__ == '__main__':
     b = GameMap("TestMap", seed, width, height, entryPoints)
     b.getMap()
     print("Process took: ",str(time.time()-timeKepper)," seconds to complete...")
+    print(str(rand.randint(1,3)))
