@@ -1,16 +1,17 @@
-import random
+from random import Random
 import time
 from mapGenerator import GameMap, CaveMap
+from randomNameGenerator import RandomNameGenerator
 
 
 
 if __name__ == '__main__':
 
     timeKepper = time.time()
-    rand = random.Random()
+    rand = Random()
     seed = rand.randint(0, 100000)
-    width = 60
-    height = 60
+    width = 600
+    height = 600
     openNess = 0.55
     smoothStep = 5
     minRoomSize = 10
@@ -24,4 +25,11 @@ if __name__ == '__main__':
     b = GameMap("TestMap", seed, width, height, entryPoints)
     b.getMap()
     print("Process took: ",str(time.time()-timeKepper)," seconds to complete...")
-    print(str(rand.randint(1,3)))
+
+    r = RandomNameGenerator()
+    for i in range(1):
+        print(r.returnRandomFirstName("i"))
+    for i in range(1):
+        print(r.returnRandomLastName())
+    for i in range(1):
+        print(r.returnRandomFullName("i"))

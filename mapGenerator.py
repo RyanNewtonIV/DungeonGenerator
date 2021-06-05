@@ -1,4 +1,4 @@
-import random
+from random import Random
 import math
 import time
 
@@ -42,7 +42,7 @@ class GameMap():
         self.width = width
         self.height = height
         self.entryPoints = entryPoints
-        self.randomNumberGenerator = random.Random()
+        self.randomNumberGenerator = Random()
         self.randomNumberGenerator.seed(self.seed)
 
     def initializeEmptyMap(self):
@@ -84,7 +84,7 @@ class GameMap():
         return mapOutput
 
     def exportMap(self,fileName):
-        mapOutput = open((fileName+".txt"),"w",encoding="utf-8")
+        mapOutput = open(("Maps/"+fileName+".txt"),"w",encoding="utf-8")
         output = self.printMap()
         mapOutput.write(output)
         mapOutput.close()
@@ -111,7 +111,7 @@ class CaveMap(GameMap):
         self.openChance = openChance
         self.minHoleSize = minHoleSize
         self.smoothSteps = smoothSteps
-        self.randomNumberGenerator = random.Random()
+        self.randomNumberGenerator = Random()
         self.randomNumberGenerator.seed(self.seed)
 
 
