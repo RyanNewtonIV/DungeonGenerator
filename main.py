@@ -10,8 +10,8 @@ if __name__ == '__main__':
     timeKepper = time.time()
     rand = Random()
     seed = rand.randint(0, 100000)
-    width = 600
-    height = 600
+    width = 60
+    height = 60
     openNess = 0.55
     smoothStep = 5
     minRoomSize = 10
