@@ -53,11 +53,19 @@ class GameMap():
                 tempMap.append(1)
             self.cellMap.append(tempMap)
 
+    def addMap(self,mapToWrite,startx,starty,width,height):
+        for i in range(startx,startx+width):
+            for j in range(starty,starty+height):
+                self.cellMap[i][j] = mapToWrite[i-startx][j-starty]
+                print(mapToWrite[i-startx][j-starty])
+
+
     def getMap(self):
         self.initializeEmptyMap()
         self.fillEdges()
         self.mapEntryPoints()
         self.exportMap(self.mapName)
+        return self.cellMap
 
     def fillEdges(self):
         for i in range(self.width):
@@ -88,6 +96,7 @@ class GameMap():
         output = self.printMap()
         mapOutput.write(output)
         mapOutput.close()
+        return self.cellMap
 
     def mapEntryPoints(self):
         for i in range(len(self.entryPoints)):
@@ -132,6 +141,7 @@ class CaveMap(GameMap):
 
         self.exportMap((self.mapName+"Smoothed"+str(self.smoothSteps)+"Steps"))
         self.cleanMap()
+        return self.cellMap
 
     def getEmptyNeighbors(self,x,y):
         numberOfEmptyNeighbors = 0
@@ -175,6 +185,7 @@ class CaveMap(GameMap):
         self.fillHoles()
         self.exportMap((self.mapName+"SmallHolesFilled"))
         self.mapEntryPoints()
+        self.identifyHoles()
         while (len(self.holeSizesMap)> 1):
             self.resetHoles()
             #timeStamp = time.time()
