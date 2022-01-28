@@ -36,4 +36,4 @@ class RandomNameGenerator():
         file = open((filePathAndName), "r", encoding="utf-8")
         dataList = file.readlines()
         file.close()
-        return str(dataList[self.rand.randint(0,len(dataList))])
+        return str(dataList[self.rand.randint(0,len(dataList)-1)])

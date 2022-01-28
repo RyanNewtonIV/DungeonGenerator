@@ -34,14 +34,16 @@ class GameMap():
     holeSize = 0
     holeSizesMap = []
     entryPoints = []
+    exitPoints = []
     randomNumberGenerator = None
 
-    def __init__(self, mapName, seed, width, height,entryPoints):
+    def __init__(self, mapName, seed, width, height,entryPoints,exitPoints):
         self.mapName = mapName
         self.seed = seed
         self.width = width
         self.height = height
         self.entryPoints = entryPoints
+        self.exitPoints = exitPoints
         self.randomNumberGenerator = Random()
         self.randomNumberGenerator.seed(self.seed)
 
@@ -57,14 +59,18 @@ class GameMap():
         for i in range(startx,startx+width):
             for j in range(starty,starty+height):
                 self.cellMap[i][j] = mapToWrite[i-startx][j-starty]
-                print(mapToWrite[i-startx][j-starty])
+                #print(mapToWrite[i-startx][j-starty])
 
 
-    def getMap(self):
+    def generateMap(self):
         self.initializeEmptyMap()
         self.fillEdges()
         self.mapEntryPoints()
+        self.mapExitPoints()
         self.exportMap(self.mapName)
+        return self.cellMap
+
+    def getMap(self):
         return self.cellMap
 
     def fillEdges(self):
@@ -72,6 +78,16 @@ class GameMap():
             for j in range(self.height):
                 if (i == 0 or j == 0 or i == self.width - 1 or j == self.height - 1):
                     self.cellMap[i][j] = 0
+
+    def fillMap(self):
+        for i in range(self.width):
+            for j in range(self.height):
+                self.cellMap[i][j] = 0
+
+    def fillRectangle(self,indexStartX,indexStartY,indexEndX,indexEndY):
+        for i in range(indexStartX,indexEndX+1):
+            for j in range(indexStartY,indexEndY+1):
+                self.cellMap[i][j] = 0
 
     def printMapValues(self):
         for j in range (self.height):
@@ -103,6 +119,10 @@ class GameMap():
             entryPoint = self.entryPoints[i]
             self.cellMap[entryPoint[0]][entryPoint[1]] = 1
 
+    def mapExitPoints(self):
+        for i in range(len(self.exitPoints)):
+            exitPoint = self.exitPoints[i]
+            self.cellMap[exitPoint[0]][exitPoint[1]] = 1
 
 class CaveMap(GameMap):
     birthLimit = None
@@ -113,8 +133,8 @@ class CaveMap(GameMap):
     holeSize = 0
     holeSizesMap = []
 
-    def __init__(self, mapName, seed, width, height, birthLimit, deathLimit, openChance, smoothSteps, minHoleSize, entryPoints):
-        super().__init__(mapName,seed,width,height,entryPoints)
+    def __init__(self, mapName, seed, width, height, birthLimit, deathLimit, openChance, smoothSteps, minHoleSize, entryPoints,exitPoints):
+        super().__init__(mapName,seed,width,height,entryPoints,exitPoints)
         self.birthLimit = birthLimit
         self.deathLimit = deathLimit
         self.openChance = openChance
@@ -124,7 +144,7 @@ class CaveMap(GameMap):
         self.randomNumberGenerator.seed(self.seed)
 
 
-    def getMap(self):
+    def generateMap(self):
         self.initializeEmptyMap()
 
         for i in range(self.width):
@@ -185,6 +205,8 @@ class CaveMap(GameMap):
         self.fillHoles()
         self.exportMap((self.mapName+"SmallHolesFilled"))
         self.mapEntryPoints()
+        self.mapExitPoints()
+        self.resetHoles()
         self.identifyHoles()
         while (len(self.holeSizesMap)> 1):
             self.resetHoles()
@@ -330,3 +352,19 @@ class CaveMap(GameMap):
                         self.cellMap[bridgeConstructorx+1][bridgeConstructory] = 1
                         for i in range(3):
                             self.smoothNeighbors(bridgeConstructorx+1, bridgeConstructory)
+
+#1/27/22 - This Class needs to take a number of different regions and allowed mapTypes(Biomes) to make a combined and interesting area
+class CombinedMap(GameMap):
+
+    differentRegions = None
+    allowedMapTypes = []
+
+    def __init__(self, mapName, seed, width, height, entryPoints,exitPoints, differentRegions, allowedMapTypes):
+        super().__init__(mapName, seed, width, height, entryPoints, exitPoints)
+        self.differentRegions = differentRegions
+        self.allowedMapTypes = allowedMapTypes
+
+    def generateMap(self):
+        self.initializeEmptyMap()
+
+
