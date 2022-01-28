@@ -47,13 +47,23 @@ class GameMap():
         self.randomNumberGenerator = Random()
         self.randomNumberGenerator.seed(self.seed)
 
-    def initializeEmptyMap(self):
-        self.cellMap = []
+    # def initializeEmptyMap(self):
+    #     self.cellMap = []
+    #     for i in range (self.width):
+    #         tempMap = []
+    #         for j in range (self.height):
+    #             tempMap.append(1)
+    #         self.cellMap.append(tempMap)
+
+    def initializeEmptyMap(self,mapToInitialize):
+        mapToInitialize = []
         for i in range (self.width):
             tempMap = []
             for j in range (self.height):
                 tempMap.append(1)
-            self.cellMap.append(tempMap)
+            mapToInitialize.append(tempMap)
+
+        return mapToInitialize
 
     def addMap(self,mapToWrite,startx,starty,width,height):
         for i in range(startx,startx+width):
@@ -63,7 +73,7 @@ class GameMap():
 
 
     def generateMap(self):
-        self.initializeEmptyMap()
+        self.cellMap = self.initializeEmptyMap(self.cellMap)
         self.fillEdges()
         self.mapEntryPoints()
         self.mapExitPoints()
@@ -84,32 +94,32 @@ class GameMap():
             for j in range(self.height):
                 self.cellMap[i][j] = 0
 
-    def fillRectangle(self,indexStartX,indexStartY,indexEndX,indexEndY):
+    def fillRectangle(self,mapToFill,indexStartX,indexStartY,indexEndX,indexEndY,fillValue):
         for i in range(indexStartX,indexEndX+1):
             for j in range(indexStartY,indexEndY+1):
-                self.cellMap[i][j] = 0
+                mapToFill[i][j] = fillValue
 
-    def printMapValues(self):
-        for j in range (self.height):
-            for i in range (self.width):
-                print(self.cellMap[i][j], end="")
+    def printMapValues(self,mapToPrint):
+        for j in range(len(mapToPrint[0])):
+            for i in range(len(mapToPrint)):
+                print(mapToPrint[i][j], end="")
             print()
 
-    def printMap(self):
+    def printMap(self,mapToPrint):
         mapOutput = ""
-        for i in range(self.height):
-            for j in range(self.width):
-                if (self.cellMap[j][i] == 0):
+        for j in range(len(mapToPrint[0])):
+            for i in range(len(mapToPrint)):
+                if (mapToPrint[i][j] == 0):
                     mapOutput += "█"
                 else:
                     mapOutput += " "
-            mapOutput +="\n"
+            mapOutput += "\n"
         print(mapOutput)
         return mapOutput
 
     def exportMap(self,fileName):
         mapOutput = open(("Maps/"+fileName+".txt"),"w",encoding="utf-8")
-        output = self.printMap()
+        output = self.printMap(self.cellMap)
         mapOutput.write(output)
         mapOutput.close()
         return self.cellMap
@@ -123,6 +133,94 @@ class GameMap():
         for i in range(len(self.exitPoints)):
             exitPoint = self.exitPoints[i]
             self.cellMap[exitPoint[0]][exitPoint[1]] = 1
+
+    def copyMap(self,mapToCopy):
+        newMap = []
+        for i in range(len(mapToCopy)):
+            tempMap = []
+            for j in range(len(mapToCopy[0])):
+                tempMap.append(mapToCopy[i][j])
+            newMap.append(tempMap)
+        return newMap
+
+    def resetMapValues(self,mapToReset):
+        for i in range(len(mapToReset)):
+            for j in range(len(mapToReset[0])):
+                if (mapToReset[i][j] > 1):
+                    mapToReset[i][j] = 1
+
+    def returnTrueIfNeighborValueGreaterThan(self,mapToCheck,x,y,valueToCheck):
+        if mapToCheck[x][y] > valueToCheck:
+            return True
+        return False
+
+    def returnTrueIfAllNeighborsValuesGreaterThan(self, mapToCheck, x, y, valueToCheck):
+        if (x == 0 or y == 0 or x == len(mapToCheck) - 1 or y == len(mapToCheck[0]) - 1):
+            return False
+        if (self.returnTrueIfNeighborValueGreaterThan(mapToCheck,x-1,y,valueToCheck) and
+            self.returnTrueIfNeighborValueGreaterThan(mapToCheck,x+1,y,valueToCheck) and
+            self.returnTrueIfNeighborValueGreaterThan(mapToCheck,x,y-1,valueToCheck) and
+            self.returnTrueIfNeighborValueGreaterThan(mapToCheck, x, y+1, valueToCheck) and
+            self.returnTrueIfNeighborValueGreaterThan(mapToCheck, x-1, y - 1, valueToCheck) and
+            self.returnTrueIfNeighborValueGreaterThan(mapToCheck, x-1, y + 1, valueToCheck) and
+            self.returnTrueIfNeighborValueGreaterThan(mapToCheck, x+1, y + 1, valueToCheck) and
+            self.returnTrueIfNeighborValueGreaterThan(mapToCheck,x+1,y-1,valueToCheck)):
+                return True
+        return False
+
+
+    def generateFillMap(self):
+        fillMap = self.copyMap(self.cellMap)
+        self.resetMapValues(fillMap)
+        #self.printMapValues(fillMap)
+
+        cellsToProcess = []
+        cellsToContinueProcessing = []
+        fillIndexValue = 0
+
+        for i in range(len(fillMap)):
+            for j in range(len(fillMap[0])):
+                if fillMap[i][j] > fillIndexValue:
+                    #print("Adding ",i,",",j)
+                    cellsToProcess.append([i,j])
+                    cellsToContinueProcessing.append([i, j])
+
+        numberOfLoops = 1
+        while(len(cellsToContinueProcessing) > 0):
+            cellsToContinueProcessing = []
+            while(len(cellsToProcess)>0):
+                currentCell = cellsToProcess.pop(0)
+                if self.returnTrueIfAllNeighborsValuesGreaterThan(fillMap, currentCell[0], currentCell[1], fillIndexValue):
+                    fillMap[currentCell[0]][currentCell[1]] += 1
+                    cellsToContinueProcessing.append(currentCell)
+
+            #self.printMapValues(fillMap)
+            fillIndexValue += 1
+
+            for i in range(len(cellsToContinueProcessing)):
+                #print(cellsToContinueProcessing[i])
+                cellsToProcess.append(cellsToContinueProcessing[i])
+
+            #print("End of Loop ",numberOfLoops)
+            numberOfLoops += 1
+
+
+        return fillMap
+
+    # By taking a Fill Map, finding the highest values in each area and then moving outwards
+    # we can generate a array that holds each room's set of coordinates as its values
+    def generateRoomMap(self, fillMapToUse):
+        # Fill function
+        None
+
+
+
+
+
+
+
+
+
 
 class CaveMap(GameMap):
     birthLimit = None
@@ -195,7 +293,7 @@ class CaveMap(GameMap):
 
 
     def generateMap(self):
-        self.initializeEmptyMap()
+        self.cellMap = self.initializeEmptyMap(self.cellMap)
 
         for i in range(self.width):
             for j in range(self.height):
@@ -256,15 +354,15 @@ class CaveMap(GameMap):
         self.exportMap((self.mapName+"SmallHolesFilled"))
         self.mapEntryPoints()
         self.mapExitPoints()
-        self.resetHoles()
+        self.resetMapValues(self.cellMap)
         self.identifyHoles()
         while (len(self.holeSizesMap)> 1):
-            self.resetHoles()
+            self.resetMapValues(self.cellMap)
             #timeStamp = time.time()
             self.identifyHoles()
             #print("All Holes identified in ", str(time.time() - timeStamp), " sec.")
             self.bridgeSection()
-            #self.printMapValues()
+            # self.printMapValues(self.cellMap)
         self.exportMap((self.mapName+"TerrainFinished"))
 
     def identifyHoles(self):
@@ -278,7 +376,7 @@ class CaveMap(GameMap):
                     self.holeSize = 0
                     #print(self.holeSizesMap)
                     holeNumber += 1
-        #self.printMapValues()
+        # self.printMapValues(self.cellMap)
         print("There are currently ",str(holeNumber-1)," isolated holes on this map.")
         for i in range(len(self.holeSizesMap)):
             pass
@@ -298,12 +396,6 @@ class CaveMap(GameMap):
         self.smoothChannels(x-1,y-1)
         self.smoothChannels(x,y-1)
         self.smoothChannels(x+1,y-1)
-
-    def resetHoles(self):
-        for i in range(self.width):
-            for j in range(self.height):
-                if (self.cellMap[i][j] > 1):
-                    self.cellMap[i][j] = 1
 
     def findHoles(self,x,y,fillColor):
         vectorsToCheck = [[x,y]]
@@ -415,6 +507,6 @@ class CombinedMap(GameMap):
         self.allowedMapTypes = allowedMapTypes
 
     def generateMap(self):
-        self.initializeEmptyMap()
+        self.cellMap = self.initializeEmptyMap(self.cellMap)
 
 

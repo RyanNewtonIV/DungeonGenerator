@@ -11,11 +11,14 @@ if __name__ == '__main__':
     rand = Random()
     seed = rand.randint(0, 100000)
 
-    seed = 15092
+    #seed = 15092
 
+    #width = 150
+    #height = 14
     width = 150
-    height = 14
-    openNess = 0.55
+    height = 10
+    #openNess = 0.55
+    openNess = .75
     smoothStep = 5
     minRoomSize = 10
     entryPoints = []
@@ -32,7 +35,10 @@ if __name__ == '__main__':
 
     a = CaveMap("TestMap", seed, width, height, 4, 3, openNess, smoothStep, minRoomSize, entryPoints, exitPoints)
     a.generateMap()
-    a.printMap()
+    a.printMap(a.getMap())
+    fillMap = a.generateFillMap()
+    a.printMapValues(fillMap)
+    print("finished")
 
 
     # a = CaveMap("TestMap", seed, width, height, 4, 3, openNess, smoothStep, minRoomSize, entryPoints, exitPoints)
