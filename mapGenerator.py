@@ -143,6 +143,56 @@ class CaveMap(GameMap):
         self.randomNumberGenerator = Random()
         self.randomNumberGenerator.seed(self.seed)
 
+# class MazeMap(GameMap):
+#
+#     def __init__(self, mapName, seed, width, height, entryPoints):
+#         super().__init__(mapName,seed,width,height,entryPoints)
+#
+#     def getMap(self):
+#         self.initializeEmptyMap()
+#         self.fillEdges()
+#         self.mapEntryPoints()
+#         self.generateMaze()
+#         self.exportMap(self.mapName)
+#         return self.cellMap
+#
+#     def generateMaze(self):
+#         wallsToAnalyze = self.generatePointstoAnalyze()
+#         while wallsToAnalyze != []:
+#             wallsToAnalyze = self.makeRandomMazeWalls(wallsToAnalyze)
+#
+#     def generateInitialPointstoAnalyze(self):
+#         wallsToAnalyze = []
+#         for i in range(self.width):
+#             for j in range(self.height):
+#                 if (i == 0 or i == self.width - 1):
+#                     if (j != 0 and j != self.height-1 and j%2 == 0):
+#                         if (self.cellMap[i][j] == 0):
+#                             wallsToAnalyze.append([i,j])
+#                 elif (j == 0 or j == self.height - 1):
+#                     if (i != 0 and i != self.height-1 and i%2 == 0):
+#                         if (self.cellMap[i][j] == 0):
+#                             wallsToAnalyze.append([i,j])
+#         return wallsToAnalyze
+#
+#     def makeRandomMazeWalls(self,wallsToAnalyze):
+#         for i in range(wallsToAnalyze):
+#             if (self.randomNumberGenerator.randint(0,1) == 1):
+#                 if (i[0] == 0):
+#
+#
+#                 elif (i[0] == self.width-1):
+#
+#                 elif (i[1] == 0):
+#
+#                 elif (i[1] == self.height - 1):
+#
+#                 else:
+
+
+
+
+
 
     def generateMap(self):
         self.initializeEmptyMap()
