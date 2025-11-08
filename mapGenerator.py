@@ -2,28 +2,40 @@ from random import Random
 import math
 import time
 
-class Vector():
-    coordinate = []
 
-    def __init__(self,x,y):
-        self.coordinate.append(x)
-        self.coordinate.append(y)
+# class Vector():
+#    coordinate = []
+#
+#     def __init__(self,x,y):
+#        self.coordinate.append(x)
+#        self.coordinate.append(y)
+#
+#     def getX(self):
+#        return self.coordinate[0]
+#
+#     def getY(self):
+#        return self.coordinate[1]
+#
+# class MapPoint(Vector):
+#    id = None
+#
+#     def __init__(self,x,y,id):
+#        self.id = id
+#        super().__init__(x,y)
+#
+#     def getID(self):
+#        return self.id
 
-    def getX(self):
-        return self.coordinate[0]
+class PathFindingNode():
+    isObstacle = False
+    isVisited = False
+    globalDistance = False
+    LocalDistance = False
+    x = 0
+    y = 0
+    neighborNodes = []
+    parentNode = False
 
-    def getY(self):
-        return self.coordinate[1]
-
-class MapPoint(Vector):
-    id = None
-
-    def __init__(self,x,y,id):
-        self.id = id
-        super().__init__(x,y)
-
-    def getID(self):
-        return self.id
 
 class GameMap():
     mapName = None
@@ -80,6 +92,9 @@ class GameMap():
         self.exportMap(self.mapName)
         return self.cellMap
 
+    def returnListofPathCoordinates(self,singleEntryPoint,singleExitPoint):
+        pass
+
     def getMap(self):
         return self.cellMap
 
@@ -115,6 +130,17 @@ class GameMap():
                     mapOutput += " "
             mapOutput += "\n"
         print(mapOutput)
+        return mapOutput
+
+    def returnMapStringCharacters(self,mapToPrint):
+        mapOutput = ""
+        for j in range(len(mapToPrint[0])):
+            for i in range(len(mapToPrint)):
+                if (mapToPrint[i][j] == 0):
+                    mapOutput += "█"
+                else:
+                    mapOutput += " "
+            mapOutput += "\n"
         return mapOutput
 
     def exportMap(self,fileName):
@@ -240,57 +266,6 @@ class CaveMap(GameMap):
         self.smoothSteps = smoothSteps
         self.randomNumberGenerator = Random()
         self.randomNumberGenerator.seed(self.seed)
-
-# class MazeMap(GameMap):
-#
-#     def __init__(self, mapName, seed, width, height, entryPoints):
-#         super().__init__(mapName,seed,width,height,entryPoints)
-#
-#     def getMap(self):
-#         self.initializeEmptyMap()
-#         self.fillEdges()
-#         self.mapEntryPoints()
-#         self.generateMaze()
-#         self.exportMap(self.mapName)
-#         return self.cellMap
-#
-#     def generateMaze(self):
-#         wallsToAnalyze = self.generatePointstoAnalyze()
-#         while wallsToAnalyze != []:
-#             wallsToAnalyze = self.makeRandomMazeWalls(wallsToAnalyze)
-#
-#     def generateInitialPointstoAnalyze(self):
-#         wallsToAnalyze = []
-#         for i in range(self.width):
-#             for j in range(self.height):
-#                 if (i == 0 or i == self.width - 1):
-#                     if (j != 0 and j != self.height-1 and j%2 == 0):
-#                         if (self.cellMap[i][j] == 0):
-#                             wallsToAnalyze.append([i,j])
-#                 elif (j == 0 or j == self.height - 1):
-#                     if (i != 0 and i != self.height-1 and i%2 == 0):
-#                         if (self.cellMap[i][j] == 0):
-#                             wallsToAnalyze.append([i,j])
-#         return wallsToAnalyze
-#
-#     def makeRandomMazeWalls(self,wallsToAnalyze):
-#         for i in range(wallsToAnalyze):
-#             if (self.randomNumberGenerator.randint(0,1) == 1):
-#                 if (i[0] == 0):
-#
-#
-#                 elif (i[0] == self.width-1):
-#
-#                 elif (i[1] == 0):
-#
-#                 elif (i[1] == self.height - 1):
-#
-#                 else:
-
-
-
-
-
 
     def generateMap(self):
         self.cellMap = self.initializeEmptyMap(self.cellMap)
@@ -510,3 +485,48 @@ class CombinedMap(GameMap):
         self.cellMap = self.initializeEmptyMap(self.cellMap)
 
 
+# class MazeMap(GameMap):
+#
+#     def __init__(self, mapName, seed, width, height, entryPoints):
+#         super().__init__(mapName,seed,width,height,entryPoints)
+#
+#     def getMap(self):
+#         self.initializeEmptyMap()
+#         self.fillEdges()
+#         self.mapEntryPoints()
+#         self.generateMaze()
+#         self.exportMap(self.mapName)
+#         return self.cellMap
+#
+#     def generateMaze(self):
+#         wallsToAnalyze = self.generatePointstoAnalyze()
+#         while wallsToAnalyze != []:
+#             wallsToAnalyze = self.makeRandomMazeWalls(wallsToAnalyze)
+#
+#     def generateInitialPointstoAnalyze(self):
+#         wallsToAnalyze = []
+#         for i in range(self.width):
+#             for j in range(self.height):
+#                 if (i == 0 or i == self.width - 1):
+#                     if (j != 0 and j != self.height-1 and j%2 == 0):
+#                         if (self.cellMap[i][j] == 0):
+#                             wallsToAnalyze.append([i,j])
+#                 elif (j == 0 or j == self.height - 1):
+#                     if (i != 0 and i != self.height-1 and i%2 == 0):
+#                         if (self.cellMap[i][j] == 0):
+#                             wallsToAnalyze.append([i,j])
+#         return wallsToAnalyze
+#
+#     def makeRandomMazeWalls(self,wallsToAnalyze):
+#         for i in range(wallsToAnalyze):
+#             if (self.randomNumberGenerator.randint(0,1) == 1):
+#                 if (i[0] == 0):
+#
+#
+#                 elif (i[0] == self.width-1):
+#
+#                 elif (i[1] == 0):
+#
+#                 elif (i[1] == self.height - 1):
+#
+#                 else:
