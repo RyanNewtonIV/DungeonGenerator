@@ -73,17 +73,29 @@ if __name__ == '__main__':
     starttime = time.time()
     fps = 0
     fpsflag = 0
-    consoleWidth = os.get_terminal_size().lines-2
-    consoleHeight = os.get_terminal_size().columns
+    HeightOffset = 1
+    WidthOffset = 0
+    consoleHeight = os.get_terminal_size().lines-HeightOffset
+    consoleWidth = os.get_terminal_size().columns-WidthOffset
     consoleManager = GameWindow()
 
     playerx = 0
     playery = 0
     movementTimer = time.time()
     movementflag = .2
+    #os.system('cls')
+    print("\033[H\033[3J", end="")
+    cls()
     while (exitFlag == False):
-        consoleWidth = os.get_terminal_size().lines-2
-        consoleHeight = os.get_terminal_size().columns
+        testvar = os.get_terminal_size().lines-HeightOffset
+        if consoleHeight != testvar:
+            consoleHeight=testvar
+            cls()
+        testvar = consoleWidth = os.get_terminal_size().columns-WidthOffset
+        if consoleWidth != testvar:
+            consoleWidth=testvar
+            cls()
+
         try:
             if keyboard.is_pressed('Esc'):
                 print("\nyou pressed Esc, so exiting...")
@@ -119,7 +131,7 @@ if __name__ == '__main__':
         #print(drawnStringForConsole)
 
 
-        print(consoleManager.returnRefreshedScreenString(consoleWidth,consoleHeight,fps,playerx,playery))
+        print(consoleManager.returnRefreshedScreenString(consoleWidth,consoleHeight,fps,playerx,playery),end="")
         #print("*FPS:",fps,"\033[H\033[3J", end="")
         # Clears the Screen avoiding screen flickering
         #print("\033[H\033[3J", end="")
