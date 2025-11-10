@@ -46,6 +46,25 @@ class GameWindow():
 
     }
 
+
+    def drawRectangle(self,x,y,width,height,fill,borderType):
+
+        for j in range (0,height):
+            for i in range (0,width):
+                self.screenMapString[i][j] = "*"
+                if i == 0 or i == width-1:
+                    self.screenMapString[i][j] = "║"
+                if j == 0 or j == height-1:
+                    self.screenMapString[i][j] = "═"
+                if i == 0 and j == 0:
+                    self.screenMapString[i][j] = "╔"
+                if i == width-1 and j == 0:
+                    self.screenMapString[i][j] = "╗"
+                if i == 0 and j == height-1:
+                    self.screenMapString[i][j] = "╚"
+                if i == width-1 and j == height-1:
+                    self.screenMapString[i][j] = "╝"
+
     def __init__(self):
         pass
 

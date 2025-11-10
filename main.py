@@ -7,29 +7,64 @@ import sys
 import keyboard
 from windowsConsoleGraphics import GameWindow
 
+
 def cls(n = 0):
     if n == 0:
         os.system('cls' if os.name == 'nt' else 'clear')
     else:
         print('\b'*n)
 
+def initializeGameWindowDict():
+    # Create Game Window Dictionary
+    gameWindowDict = {}
+    for j in range(0, consoleHeight):
+        for i in range(0, consoleWidth):
+            indexString = str(i) + "," + str(j)
+            gameWindowDict[indexString] = "*"
+    return gameWindowDict
+
+def drawGameWindowBorders():
+    pass
+
+def returnFrameStringFromDict(dictionaryToConvert):
+    frameString = ""
+    for j in range(0, consoleHeight):
+        for i in range(0, consoleWidth):
+            indexString = str(i) + "," + str(j)
+            frameString += dictionaryToConvert[indexString]
+        if j < consoleHeight - 1:
+            frameString += str("\n")
+    frameString += str("\033[H\033[3J")
+    return frameString
+
+def flagConsoleResize(consoleWidth,consoleHeight):
+    # Clear the screen in the case of a screen resize so redrawing frames works
+    ResizedFlag = False
+    testvar = os.get_terminal_size().lines - HeightOffset
+    if consoleHeight != testvar:
+        return True
+    testvar = os.get_terminal_size().columns - WidthOffset
+    if consoleWidth != testvar:
+        return True
+    return False
+
+def drawStringToDict(dict,string,x,y):
+    indexString = ""
+    for i in range(len(string)):
+        indexString = str(x+i) + "," + str(y)
+        screenBuffer[indexString] = string[i]
+    return dict
+
+def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
+    pass
+
+def getLatencyString():
+    pass
+
 
 if __name__ == '__main__':
     #Fixes Screen Flickering:
     os.system("")
-
-    COLOR = {
-        "HEADER": "\033[95m",
-        "BLUE": "\033[94m",
-        "GREEN": "\033[92m",
-        "RED": "\033[91m",
-        "Black": "\u001b[30m",
-        "Yellow": "\u001b[33m",
-        "Magenta": "\u001b[35m",
-        "Cyan": "\u001b[36m",
-        "White": "\u001b[37m",
-        "END": "\033[0m",
-    }
 
     print(sys.path)
     print(os.getcwd())
@@ -68,34 +103,58 @@ if __name__ == '__main__':
     print(a.exitPoints[0])
 
 
-    #GameWindowLoop
+    #GameProperties
     exitFlag =False
     starttime = time.time()
     fps = 0
     fpsflag = 0
-    HeightOffset = 1
+    HeightOffset = 0
     WidthOffset = 0
     consoleHeight = os.get_terminal_size().lines-HeightOffset
     consoleWidth = os.get_terminal_size().columns-WidthOffset
     consoleManager = GameWindow()
-
     playerx = 0
     playery = 0
     movementTimer = time.time()
     movementflag = .2
-    #os.system('cls')
-    print("\033[H\033[3J", end="")
-    cls()
-    while (exitFlag == False):
-        testvar = os.get_terminal_size().lines-HeightOffset
-        if consoleHeight != testvar:
-            consoleHeight=testvar
-            cls()
-        testvar = consoleWidth = os.get_terminal_size().columns-WidthOffset
-        if consoleWidth != testvar:
-            consoleWidth=testvar
-            cls()
+    lagTest = time.time()
 
+
+
+
+    #Old Screen Clearing Code:
+    #os.system('cls')
+    #print("\033[H\033[3J", end="")
+
+    #Slowly Clear the Screen first so hack for redrawing frames works
+    cls()
+
+    screenBuffer = initializeGameWindowDict()
+
+    #PRIMARY GAME LOOP
+    while (exitFlag == False):
+
+        #Flag if the console is resized and handle the resizing
+        lagTest = time.time()
+        lagTesty = 0
+
+        if (flagConsoleResize(consoleWidth,consoleHeight)):
+            testvar = os.get_terminal_size().lines - HeightOffset
+            if consoleHeight != testvar:
+                consoleHeight = testvar
+                cls()
+            testvar = consoleWidth = os.get_terminal_size().columns - WidthOffset
+            if consoleWidth != testvar:
+                consoleWidth = testvar
+                cls()
+            screenBuffer = initializeGameWindowDict()
+
+        lagTestString = "Flagging Resize: "+str(time.time()-lagTest)+"(s)"
+        drawStringToDict(screenBuffer,lagTestString,0,lagTesty)
+        lagTesty += 1
+        lagTest = time.time()
+
+        #Input Handling
         try:
             if keyboard.is_pressed('Esc'):
                 print("\nyou pressed Esc, so exiting...")
@@ -120,7 +179,16 @@ if __name__ == '__main__':
         except:
             break
 
-        drawnStringForConsole = a.returnMapStringCharacters(a.getMap())
+        lagTestString = "Keyboard Input: " + str(time.time() - lagTest) + "(s)"
+        drawStringToDict(screenBuffer, lagTestString, 0, lagTesty)
+        lagTesty += 1
+        lagTest = time.time()
+
+        #Old Code to Draw My Cave Maps
+        #drawnStringForConsole = a.returnMapStringCharacters(a.getMap())
+        #print(drawnStringForConsole)
+
+        #Handling Calculating and Drawing FPS
         if time.time() < starttime + 1:
             fpsflag += 1
         else:
@@ -128,10 +196,25 @@ if __name__ == '__main__':
             fpsflag = 0
             starttime = time.time()
 
-        #print(drawnStringForConsole)
 
+        fpsString = "FPS:"+str(fps) + " " + str(consoleWidth) +"x" + str(consoleHeight)
 
-        print(consoleManager.returnRefreshedScreenString(consoleWidth,consoleHeight,fps,playerx,playery),end="")
+        drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
+
+        lagTestString = "FPS Calc and Draw: " + str(time.time() - lagTest) + "(s)"
+        drawStringToDict(screenBuffer, lagTestString, 0, lagTesty)
+        lagTesty += 1
+        lagTest = time.time()
+
+        #print(consoleManager.returnRefreshedScreenString(consoleWidth,consoleHeight,fps,playerx,playery),end="")
+
+        print(returnFrameStringFromDict(screenBuffer),sep="",end="")
+
+        lagTestString = "Drawing the Frame: " + str(time.time() - lagTest) + "(s)"
+        drawStringToDict(screenBuffer, lagTestString, 0, lagTesty)
+        lagTesty += 1
+        lagTest = time.time()
+
         #print("*FPS:",fps,"\033[H\033[3J", end="")
         # Clears the Screen avoiding screen flickering
         #print("\033[H\033[3J", end="")
