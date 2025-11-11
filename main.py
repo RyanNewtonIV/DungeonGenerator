@@ -182,12 +182,14 @@ if __name__ == '__main__':
     UImaxStBarAmountClamping = 1000
     UIStatusBarScalingWidth = 1
 
+    #Player Variables
     maxhp = 320
     hp = 100
     maxmp = 80
     mp = 50
     maxst = 120
     st = 100
+    numberOfSouls = 0
 
 
     #Dividor for the number of vertical characters to scale the status bars
@@ -293,6 +295,13 @@ if __name__ == '__main__':
             st = maxst
         if st > maxst:
             st = 0
+
+        numberOfSouls += 10
+        soulsString = "Souls: "+str(numberOfSouls)
+        UISoulsDrawAnchorX = consoleWidth-len(soulsString)-4
+        UISoulsDrawAnchorY = consoleHeight - 4
+        drawDicttoDict(asciiArtist.createRectangleDictExt(UISoulsDrawAnchorX,UISoulsDrawAnchorY,len(soulsString)+2,3,"█","Blk","Bk-Blk","singleLine","Wht","Bk-Blk"),screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict(soulsString,UISoulsDrawAnchorX+1,UISoulsDrawAnchorY+1,"Wht","Bk-Blk"),screenBuffer)
 
 
         #Handling Calculating and Drawing FPS
