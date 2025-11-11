@@ -1,6 +1,4 @@
-class GameWindow():
-
-    screenMapString = []
+class AsciiCharacter():
 
     COLOR = {
         "ESCAPECODE-Octal": "\033",
@@ -37,17 +35,90 @@ class GameWindow():
         "Bk-LtMag": "[105m",
         "LtCyn": "[96m",
         "Bk-LtCyn": "[106m",
-        "Whi": "[97m",
+        "Wht": "[97m",
         "Bk-Whi": "[107m",
         "Bold": "[1m",
         "Underline": "[4m",
+        "Trans": "",
         "END": "[0m"
-
-
     }
 
 
+
+    def __init__(self,x,y,characterString,txtColor,backgroundColor,bold,underline):
+        self.properties = {}
+        self.properties["x"] = x
+        self.properties["y"] = y
+        self.properties['charSymbol'] = characterString
+        self.properties['txtColor'] = txtColor
+        self.properties['backgroundColor'] = backgroundColor
+        self.properties['bold'] = bold
+        self.properties['underline'] = underline
+
+
+    def getPropertiesDict(self):
+        return self.properties
+
+    def getCharacterSimple(self):
+        return self.properties["charSymbol"]
+
+    def getCharacterString(self):
+        if self.properties["bold"] == False and self.properties["underline"]== False:
+            if self.properties["backgroundColor"]=="Trans":
+                if self.properties["txtColor"]=="Wht":
+                    return self.properties["charSymbol"]
+                return self.colTxt(self.properties["charSymbol"],self.properties["txtColor"])
+        return self.colTxtExt(self.properties["charSymbol"],self.properties["txtColor"],self.properties["backgroundColor"],self.properties["bold"],self.properties["underline"])
+
+    def getProperties(self):
+        return str(self.properties["txtColor"])+str(self.properties["backgroundColor"])+str(self.properties["bold"])+str(self.properties["underline"])
+
+    def colTxt(self,string,color):
+        return str(self.COLOR["ESCAPECODE-Hexadecimal"]+self.COLOR[color]+str(string)+self.COLOR["ESCAPECODE-Hexadecimal"]+self.COLOR["END"])
+
+    def colTxtExt(self,string,textColor,backgroundColor,bold,underline):
+        boldstring = ""
+        if bold == True:
+            boldstring = self.COLOR["ESCAPECODE-Hexadecimal"]+"[1m"
+        underlinestring = ""
+        if underline == True:
+            underlinestring = self.COLOR["ESCAPECODE-Hexadecimal"]+"[4m"
+        #return str(self.COLOR["ESCAPECODE-Hexadecimal"]+self.COLOR[textColor]+self.COLOR["ESCAPECODE-Hexadecimal"]+self.COLOR[backgroundColor]+boldstring+underlinestring+str(string)+self.COLOR["ESCAPECODE-Hexadecimal"]+self.COLOR["END"])
+        return str(self.COLOR["ESCAPECODE-Hexadecimal"] + self.COLOR[textColor] + self.COLOR["ESCAPECODE-Hexadecimal"] + self.COLOR[backgroundColor] + boldstring + underlinestring + str(string)+self.COLOR["ESCAPECODE-Hexadecimal"] + self.COLOR["END"])
+
+
+
+class AsciiArtGenerator():
+
+    screenMapString = []
+    def __init__(self):
+        pass
+
     def drawRectangle(self,x,y,width,height,fill,borderType):
+
+        # Create Game Window Dictionary
+        returnAsciiSpriteDict = {}
+        for j in range(0, height):
+            for i in range(0, width):
+                indexString = str(i) + "," + str(j)
+
+
+                if i == 0 or i == width-1:
+                    returnAsciiSpriteDict[indexString] = AsciiCharacter(i,j,"║","Whi","Blk",False,False)
+                if j == 0 or j == height-1:
+                    self.screenMapString[i][j] = "═"
+                if i == 0 and j == 0:
+                    self.screenMapString[i][j] = "╔"
+                if i == width-1 and j == 0:
+                    self.screenMapString[i][j] = "╗"
+                if i == 0 and j == height-1:
+                    self.screenMapString[i][j] = "╚"
+                if i == width-1 and j == height-1:
+                    self.screenMapString[i][j] = "╝"
+
+                returnAsciiSpriteDict[indexString] = "*"
+        return returnAsciiSpriteDict
+
 
         for j in range (0,height):
             for i in range (0,width):
@@ -65,8 +136,7 @@ class GameWindow():
                 if i == width-1 and j == height-1:
                     self.screenMapString[i][j] = "╝"
 
-    def __init__(self):
-        pass
+
 
     def colTxt(self,string,color):
         return str(self.COLOR["ESCAPECODE-Octal"]+self.COLOR[color]+str(string)+self.COLOR["END"])

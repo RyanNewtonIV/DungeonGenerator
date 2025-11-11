@@ -1,3 +1,4 @@
+import random
 from random import Random
 import time
 from mapGenerator import GameMap, CaveMap
@@ -5,7 +6,7 @@ from randomNameGenerator import RandomNameGenerator
 import os
 import sys
 import keyboard
-from windowsConsoleGraphics import GameWindow
+from windowsConsoleGraphics import AsciiArtGenerator, AsciiCharacter
 
 
 def cls(n = 0):
@@ -20,7 +21,14 @@ def initializeGameWindowDict():
     for j in range(0, consoleHeight):
         for i in range(0, consoleWidth):
             indexString = str(i) + "," + str(j)
-            gameWindowDict[indexString] = "*"
+            index = random.randint(0,5)
+            if index < 3:
+                newCharacter = AsciiCharacter(i,j,"*","Wht","Trans",False,False)
+            elif index == 5:
+                newCharacter = AsciiCharacter(i, j, "O", "Blu", "Trans", False, False)
+            else:
+                newCharacter = AsciiCharacter(i, j, "X", "Red", "Bk-Blk", False, False)
+            gameWindowDict[indexString] = newCharacter
     return gameWindowDict
 
 def drawGameWindowBorders():
@@ -28,12 +36,33 @@ def drawGameWindowBorders():
 
 def returnFrameStringFromDict(dictionaryToConvert):
     frameString = ""
+
     for j in range(0, consoleHeight):
         for i in range(0, consoleWidth):
-            indexString = str(i) + "," + str(j)
-            frameString += dictionaryToConvert[indexString]
+
+            indexAsciiObject = str(i) + "," + str(j)
+            frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
+
+            # Broken attempt at optomization
+            # if i != 0 and j != 0:
+            #     if i > 0:
+            #         prevIndexAsciiObject = str(i-1) + "," + str(j)
+            #     else:
+            #         frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
+            #         pass
+            #
+            #     if dictionaryToConvert[indexAsciiObject].getProperties() == dictionaryToConvert[prevIndexAsciiObject].getProperties():
+            #         frameString += dictionaryToConvert[indexAsciiObject].getCharacterSimple()
+            #     else:
+            #         frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
+            # else:
+            #     frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
+
+
         if j < consoleHeight - 1:
             frameString += str("\n")
+
+
     frameString += str("\033[H\033[3J")
     return frameString
 
@@ -52,7 +81,8 @@ def drawStringToDict(dict,string,x,y):
     indexString = ""
     for i in range(len(string)):
         indexString = str(x+i) + "," + str(y)
-        screenBuffer[indexString] = string[i]
+        newCharacter = AsciiCharacter(x+i,y,string[i],"Wht","Trans",False,False)
+        screenBuffer[indexString] = newCharacter
     return dict
 
 def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
@@ -112,7 +142,7 @@ if __name__ == '__main__':
     WidthOffset = 0
     consoleHeight = os.get_terminal_size().lines-HeightOffset
     consoleWidth = os.get_terminal_size().columns-WidthOffset
-    consoleManager = GameWindow()
+    #consoleManager = AsciiArtGenerator()
     playerx = 0
     playery = 0
     movementTimer = time.time()
@@ -150,7 +180,7 @@ if __name__ == '__main__':
         #Input Handling
         try:
             if keyboard.is_pressed('Esc'):
-                print("\nyou pressed Esc, so exiting...")
+                print("\n\x1B[0myou pressed Esc, so exiting...")
                 exitFlag = True
                 #sys.exit(0)
             if keyboard.is_pressed('d'):
@@ -182,7 +212,6 @@ if __name__ == '__main__':
             starttime = time.time()
         fpsString = "FPS:"+str(fps) + " " + str(consoleWidth) +"x" + str(consoleHeight)
         drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
-
 
         #Print Screen Buffer to Console
         sys.stdout.write(returnFrameStringFromDict(screenBuffer))
