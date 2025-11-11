@@ -102,6 +102,11 @@ def drawDicttoDict(dictToDraw, dictToDrawTo):
                     dictToDraw[indexString].getPropertiesDict()["backgroundColor"] = dictToDrawTo[indexString].getPropertiesDict()["backgroundColor"]
                 dictToDrawTo[indexString] = dictToDraw[indexString]
 
+def statusBarGetClampedValue(maxstat,clampingAmount,maxWidth):
+    if maxstat < clampingAmount:
+        return int(maxWidth*(maxstat/clampingAmount))
+    else:
+        return int(maxWidth)
 
 
 def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
@@ -161,16 +166,36 @@ if __name__ == '__main__':
     WidthOffset = 0
     consoleHeight = os.get_terminal_size().lines-HeightOffset
     consoleWidth = os.get_terminal_size().columns-WidthOffset
-    consoleMidX = consoleWidth/2
-    consoleMidY = consoleHeight/2
-    statusbarsScalingFactor = 36
-    scalingStatusbars = int((statusbarsScalingFactor + consoleHeight) / statusbarsScalingFactor)
+    consoleMidX = int(consoleWidth/2)
+    consoleMidY = int(consoleHeight/2)
     asciiArtist = AsciiArtGenerator()
     playerx = 0
     playery = 0
     movementTimer = time.time()
     movementflag = .2
     lagTest = time.time()
+
+    #UI Status Bar Arguments
+    UIstatusBarMaxWidth = int(consoleWidth/2)-2
+    UImaxHPBarAmountClamping = 1000
+    UImaxMPBarAmountClamping = 1000
+    UImaxStBarAmountClamping = 1000
+    UIStatusBarScalingWidth = 1
+
+    maxhp = 320
+    hp = 100
+    maxmp = 80
+    mp = 50
+    maxst = 120
+    st = 100
+
+
+    #Dividor for the number of vertical characters to scale the status bars
+    statusbarsScalingFactor = 36
+    #How Many lines on the y axis to have for the status bars
+    scalingStatusbars = int((statusbarsScalingFactor + consoleHeight) / statusbarsScalingFactor)
+
+
 
 
 
@@ -189,8 +214,9 @@ if __name__ == '__main__':
     #drawDicttoDict(rectangleDict,screenBuffer,rectangleDict['x'],rectangleDict['y'],rectangleDict['width'],rectangleDict['height'])
     drawDicttoDict(rectangleDict, screenBuffer)
 
-    maxhp = 100
-    hp = 100
+
+
+
 
     #PRIMARY GAME LOOP
     while (exitFlag == False):
@@ -240,17 +266,33 @@ if __name__ == '__main__':
         #Draw the Game Window Borders
         drawDicttoDict(asciiArtist.createRectangleDictExt(0,0,consoleWidth,consoleHeight," ","Trans","Trans","doubleLine","Wht","Trans"),screenBuffer)
 
-        #Draw the Healthbar
-        drawDicttoDict(asciiArtist.createStatusBar(2, 2, int(consoleMidX-2), scalingStatusbars, hp, maxhp, "Red","░","DkGry","Bk-Blk"),screenBuffer)
-        # Draw the Manabar
-        drawDicttoDict(asciiArtist.createStatusBar(2, 2+scalingStatusbars, int(consoleMidX - 2), scalingStatusbars, hp, maxhp, "Blu", "░", "DkGry","Bk-Blk"), screenBuffer)
-        # Draw the Manabar
-        drawDicttoDict(asciiArtist.createStatusBar(2, 2 + scalingStatusbars*2, int(consoleMidX - 2), scalingStatusbars, hp, maxhp,"Grn", "░", "DkGry", "Bk-Blk"), screenBuffer)
+        #Draw the Heatlh Bar
+        drawDicttoDict(asciiArtist.createStatusBar(2, 2, statusBarGetClampedValue(maxhp, UImaxHPBarAmountClamping, consoleMidX - 2), scalingStatusbars, hp, maxhp, "Red","|","DkGry","Bk-Blk"),screenBuffer)
+
+        # Draw the Mana Bar
+        drawDicttoDict(asciiArtist.createStatusBar(2, 2 + scalingStatusbars,statusBarGetClampedValue(maxmp, UImaxMPBarAmountClamping,consoleMidX - 2), scalingStatusbars, mp,maxmp, "Blu", "|", "DkGry", "Bk-Blk"), screenBuffer)
+
+        # Draw the Heatlh Bar
+        drawDicttoDict(asciiArtist.createStatusBar(2, 2 + scalingStatusbars * 2,statusBarGetClampedValue(maxst, UImaxStBarAmountClamping,consoleMidX - 2), scalingStatusbars, st,maxst, "Grn", "|", "DkGry", "Bk-Blk"), screenBuffer)
+
+        #Draw the Inventory
+        drawDicttoDict(asciiArtist.createRectangleDictExt(2,consoleHeight-12,5,5,"█","Blk","Bk-Blk","singleLine","DkGry","Bk-Blk"),screenBuffer)
+        drawDicttoDict(asciiArtist.createRectangleDictExt(8, consoleHeight - 17, 5, 5, "█", "Blk", "Bk-Blk","singleLine","DkGry","Bk-Blk"), screenBuffer)
+        drawDicttoDict(asciiArtist.createRectangleDictExt(14, consoleHeight - 12, 5, 5, "█", "Blk", "Bk-Blk","singleLine","DkGry","Bk-Blk"), screenBuffer)
+        drawDicttoDict(asciiArtist.createRectangleDictExt(8, consoleHeight - 7, 5, 5, "█", "Blk", "Bk-Blk","singleLine","DkGry","Bk-Blk"), screenBuffer)
 
         #Test the Healthbar
         hp -= .1
         if hp < 0:
             hp = maxhp
+        mp -= .1
+        if mp < 0:
+            mp = maxmp
+        st -= .1
+        if st < 0:
+            st = maxst
+        if st > maxst:
+            st = 0
 
 
         #Handling Calculating and Drawing FPS
