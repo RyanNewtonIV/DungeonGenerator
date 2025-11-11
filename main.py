@@ -21,14 +21,16 @@ def initializeGameWindowDict():
     for j in range(0, consoleHeight):
         for i in range(0, consoleWidth):
             indexString = str(i) + "," + str(j)
-            index = random.randint(0,5)
-            if index < 3:
-                newCharacter = AsciiCharacter(i,j,"*","Wht","Trans",False,False)
-            elif index == 5:
-                newCharacter = AsciiCharacter(i, j, "O", "Blu", "Trans", False, False)
-            else:
-                newCharacter = AsciiCharacter(i, j, "X", "Red", "Bk-Blk", False, False)
+            # index = random.randint(0,5)
+            # if index < 3:
+            #     newCharacter = AsciiCharacter(i,j,"*","Wht","Trans",False,False)
+            # elif index == 5:
+            #     newCharacter = AsciiCharacter(i, j, "O", "Blu", "Trans", False, False)
+            # else:
+            #     newCharacter = AsciiCharacter(i, j, "X", "Red", "Bk-Blk", False, False)
+            newCharacter = AsciiCharacter(i, j, ".", "DkGry", "Trans", False, False)
             gameWindowDict[indexString] = newCharacter
+
     return gameWindowDict
 
 def drawGameWindowBorders():
@@ -63,7 +65,7 @@ def returnFrameStringFromDict(dictionaryToConvert):
             frameString += str("\n")
 
 
-    frameString += str("\033[H\033[3J")
+    frameString += str("\033[H\033[3J\033[0m")
     return frameString
 
 def flagConsoleResize(consoleWidth,consoleHeight):
@@ -84,6 +86,23 @@ def drawStringToDict(dict,string,x,y):
         newCharacter = AsciiCharacter(x+i,y,string[i],"Wht","Trans",False,False)
         screenBuffer[indexString] = newCharacter
     return dict
+
+def drawDicttoDict(dictToDraw, dictToDrawTo):
+
+    xstart = dictToDraw['x']
+    ystart = dictToDraw['y']
+    width = dictToDraw['width']
+    height = dictToDraw['height']
+
+    for j in range(ystart,height+ystart):
+        for i in range(xstart,width+xstart):
+            indexString = str(i) + "," + str(j)
+            if dictToDraw[indexString].getCharacterSimple() != " ":
+                if dictToDraw[indexString].getPropertiesDict()["backgroundColor"] == "Trans":
+                    dictToDraw[indexString].getPropertiesDict()["backgroundColor"] = dictToDrawTo[indexString].getPropertiesDict()["backgroundColor"]
+                dictToDrawTo[indexString] = dictToDraw[indexString]
+
+
 
 def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
     pass
@@ -142,7 +161,7 @@ if __name__ == '__main__':
     WidthOffset = 0
     consoleHeight = os.get_terminal_size().lines-HeightOffset
     consoleWidth = os.get_terminal_size().columns-WidthOffset
-    #consoleManager = AsciiArtGenerator()
+    asciiArtist = AsciiArtGenerator()
     playerx = 0
     playery = 0
     movementTimer = time.time()
@@ -161,8 +180,18 @@ if __name__ == '__main__':
 
     screenBuffer = initializeGameWindowDict()
 
+    rectangleDict = asciiArtist.createRectangleDict(5, 5, 10, 10, " ", "Red", "Trans")
+    rectangleDict = asciiArtist.createRectangleDictExt(5, 5, 10, 10, " ", "Red", "Trans", "solidBlockSquareRoundedCorners", "Wht", "Trans")
+    #drawDicttoDict(rectangleDict,screenBuffer,rectangleDict['x'],rectangleDict['y'],rectangleDict['width'],rectangleDict['height'])
+    drawDicttoDict(rectangleDict, screenBuffer)
+
+    maxhp = 100
+    hp = 100
+
     #PRIMARY GAME LOOP
     while (exitFlag == False):
+
+        screenBuffer = initializeGameWindowDict()
 
         #Flag Console Resize
         if (flagConsoleResize(consoleWidth,consoleHeight)):
@@ -202,6 +231,11 @@ if __name__ == '__main__':
         except:
             break
 
+        #Draw the Game Window Borders
+        drawDicttoDict(asciiArtist.createRectangleDictExt(0,0,consoleWidth,consoleHeight," ","Trans","Trans","doubleLine","Wht","Trans"),screenBuffer)
+
+        asciiArtist.createStatusBar(2, 2, 15, 2, hp, maxhp, "Red", "Bk-Blk")
+
 
         #Handling Calculating and Drawing FPS
         if time.time() < starttime + 1:
@@ -210,9 +244,10 @@ if __name__ == '__main__':
             fps = fpsflag
             fpsflag = 0
             starttime = time.time()
-        fpsString = "FPS:"+str(fps) + " " + str(consoleWidth) +"x" + str(consoleHeight)
-        drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
-
+        fpsString = "|FPS:"+str(fps) + "|" + str(consoleWidth) +"x" + str(consoleHeight)+"|"+str(consoleWidth*consoleHeight)+"units|"
+        #drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
+        fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
+        drawDicttoDict(fpsDict,screenBuffer)
         #Print Screen Buffer to Console
         sys.stdout.write(returnFrameStringFromDict(screenBuffer))
 
