@@ -161,6 +161,10 @@ if __name__ == '__main__':
     WidthOffset = 0
     consoleHeight = os.get_terminal_size().lines-HeightOffset
     consoleWidth = os.get_terminal_size().columns-WidthOffset
+    consoleMidX = consoleWidth/2
+    consoleMidY = consoleHeight/2
+    statusbarsScalingFactor = 36
+    scalingStatusbars = int((statusbarsScalingFactor + consoleHeight) / statusbarsScalingFactor)
     asciiArtist = AsciiArtGenerator()
     playerx = 0
     playery = 0
@@ -198,13 +202,15 @@ if __name__ == '__main__':
             testvar = os.get_terminal_size().lines - HeightOffset
             if consoleHeight != testvar:
                 consoleHeight = testvar
+                consoleMidY = int(testvar / 2)
+                scalingStatusbars = int((statusbarsScalingFactor + consoleHeight) / statusbarsScalingFactor)
                 cls()
-            testvar = consoleWidth = os.get_terminal_size().columns - WidthOffset
+            testvar = os.get_terminal_size().columns - WidthOffset
             if consoleWidth != testvar:
                 consoleWidth = testvar
+                consoleMidX = int(testvar / 2)
                 cls()
             screenBuffer = initializeGameWindowDict()
-
 
         #Input Handling
         try:
@@ -234,7 +240,17 @@ if __name__ == '__main__':
         #Draw the Game Window Borders
         drawDicttoDict(asciiArtist.createRectangleDictExt(0,0,consoleWidth,consoleHeight," ","Trans","Trans","doubleLine","Wht","Trans"),screenBuffer)
 
-        asciiArtist.createStatusBar(2, 2, 15, 2, hp, maxhp, "Red", "Bk-Blk")
+        #Draw the Healthbar
+        drawDicttoDict(asciiArtist.createStatusBar(2, 2, int(consoleMidX-2), scalingStatusbars, hp, maxhp, "Red","░","DkGry","Bk-Blk"),screenBuffer)
+        # Draw the Manabar
+        drawDicttoDict(asciiArtist.createStatusBar(2, 2+scalingStatusbars, int(consoleMidX - 2), scalingStatusbars, hp, maxhp, "Blu", "░", "DkGry","Bk-Blk"), screenBuffer)
+        # Draw the Manabar
+        drawDicttoDict(asciiArtist.createStatusBar(2, 2 + scalingStatusbars*2, int(consoleMidX - 2), scalingStatusbars, hp, maxhp,"Grn", "░", "DkGry", "Bk-Blk"), screenBuffer)
+
+        #Test the Healthbar
+        hp -= .1
+        if hp < 0:
+            hp = maxhp
 
 
         #Handling Calculating and Drawing FPS

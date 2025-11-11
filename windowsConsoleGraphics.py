@@ -97,7 +97,7 @@ class AsciiArtGenerator():
     def __init__(self):
         pass
 
-    def createStatusBar(self,x,y,width,height,doubleCurrentAmount,doubleAmountMax, fillCharColor, fillCharBackgroundColor):
+    def createStatusBar(self,x,y,width,height,doubleCurrentAmount,doubleAmountMax, fillCharColor, emptyChar, emptyCharColor, charBackgroundColor):
 
         returnAsciiSpriteDict = {}
         returnAsciiSpriteDict['x'] = x
@@ -110,35 +110,41 @@ class AsciiArtGenerator():
         numberOfFullSquares = int(numberOfSquares)
 
 
-        print("y: ",y)
-        print("width: ",width)
-        print("height: ",height)
-        print("Max Amount: ",doubleAmountMax)
-        print("Current Amount: ",doubleCurrentAmount)
-        print("Percentage: ",amountModifier)
-        print("Percentage x Squares: ",numberOfSquares)
-        print("x: ",x)
-        print("Percentage x Squares rounded: ",numberOfFullSquares)
-        print("Remainder: ",remainder)
-
-        time.sleep(10)
+        # print("y: ",y)
+        # print("width: ",width)
+        # print("height: ",height)
+        # print("Max Amount: ",doubleAmountMax)
+        # print("Current Amount: ",doubleCurrentAmount)
+        # print("Percentage: ",amountModifier)
+        # print("Percentage x Squares: ",numberOfSquares)
+        # print("x: ",x)
+        # print("Percentage x Squares rounded: ",numberOfFullSquares)
+        # print("Remainder: ",remainder)
+        #
+        # time.sleep(10)
 
         for j in range(y, height+y):
             for i in range(x, width+x):
                 indexString = str(i) + "," + str(j)
-                if i < numberOfFullSquares:
-                    returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharColor, fillCharBackgroundColor, False, False)
-                elif i == numberOfFullSquares:
+                if i-x < numberOfFullSquares:
+                    returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharColor, charBackgroundColor, False, False)
+                elif i-x == numberOfFullSquares:
                     if remainder < .25:
-                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "░", fillCharColor, fillCharBackgroundColor, False, False)
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "░", fillCharColor, charBackgroundColor, False, False)
                     elif remainder < .5:
-                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "▒", fillCharColor, fillCharBackgroundColor, False, False)
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "▒", fillCharColor, charBackgroundColor, False, False)
                     elif remainder < .75:
-                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "▓", fillCharColor, fillCharBackgroundColor, False, False)
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "▓", fillCharColor, charBackgroundColor, False, False)
+                        # print(returnAsciiSpriteDict[indexString].getPropertiesString())
+                        # time.sleep(2)
                     else:
-                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharColor, fillCharBackgroundColor, False, False)
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharColor, charBackgroundColor, False, False)
                 else:
-                    returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharBackgroundColor,fillCharBackgroundColor, False, False)
+                    # returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharBackgroundColor,fillCharBackgroundColor, False, False)
+                    returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, emptyChar, emptyCharColor,charBackgroundColor, False, False)
+
+                # if j > 0:
+                #     returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, str(i%10), fillCharBackgroundColor,fillCharBackgroundColor, False, False)
 
         return returnAsciiSpriteDict
 
