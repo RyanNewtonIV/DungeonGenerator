@@ -134,10 +134,7 @@ if __name__ == '__main__':
     #PRIMARY GAME LOOP
     while (exitFlag == False):
 
-        #Flag if the console is resized and handle the resizing
-        lagTest = time.time()
-        lagTesty = 0
-
+        #Flag Console Resize
         if (flagConsoleResize(consoleWidth,consoleHeight)):
             testvar = os.get_terminal_size().lines - HeightOffset
             if consoleHeight != testvar:
@@ -149,10 +146,6 @@ if __name__ == '__main__':
                 cls()
             screenBuffer = initializeGameWindowDict()
 
-        lagTestString = "Flagging Resize: "+str(time.time()-lagTest)+"(s)"
-        drawStringToDict(screenBuffer,lagTestString,0,lagTesty)
-        lagTesty += 1
-        lagTest = time.time()
 
         #Input Handling
         try:
@@ -179,14 +172,6 @@ if __name__ == '__main__':
         except:
             break
 
-        lagTestString = "Keyboard Input: " + str(time.time() - lagTest) + "(s)"
-        drawStringToDict(screenBuffer, lagTestString, 0, lagTesty)
-        lagTesty += 1
-        lagTest = time.time()
-
-        #Old Code to Draw My Cave Maps
-        #drawnStringForConsole = a.returnMapStringCharacters(a.getMap())
-        #print(drawnStringForConsole)
 
         #Handling Calculating and Drawing FPS
         if time.time() < starttime + 1:
@@ -195,37 +180,17 @@ if __name__ == '__main__':
             fps = fpsflag
             fpsflag = 0
             starttime = time.time()
-
-
         fpsString = "FPS:"+str(fps) + " " + str(consoleWidth) +"x" + str(consoleHeight)
-
         drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
 
-        lagTestString = "FPS Calc and Draw: " + str(time.time() - lagTest) + "(s)"
-        drawStringToDict(screenBuffer, lagTestString, 0, lagTesty)
-        lagTesty += 1
-        lagTest = time.time()
 
-        #print(consoleManager.returnRefreshedScreenString(consoleWidth,consoleHeight,fps,playerx,playery),end="")
-
-        print(returnFrameStringFromDict(screenBuffer),sep="",end="")
-
-        lagTestString = "Drawing the Frame: " + str(time.time() - lagTest) + "(s)"
-        drawStringToDict(screenBuffer, lagTestString, 0, lagTesty)
-        lagTesty += 1
-        lagTest = time.time()
-
-        #print("*FPS:",fps,"\033[H\033[3J", end="")
-        # Clears the Screen avoiding screen flickering
-        #print("\033[H\033[3J", end="")
+        #Print Screen Buffer to Console
+        sys.stdout.write(returnFrameStringFromDict(screenBuffer))
 
 
-
-    print("Console is ",consoleWidth," by ",consoleHeight)
-    print(COLOR["Yellow"], "finished", COLOR["END"],sep = "")
-    print(COLOR["Black"], "finished", COLOR["END"],sep = "")
-    print(COLOR["BLUE"], "finished", COLOR["END"],sep = "")
-
+    # Old Code to Draw My Cave Maps
+    # drawnStringForConsole = a.returnMapStringCharacters(a.getMap())
+    # print(drawnStringForConsole)
 
     # r = RandomNameGenerator()
     # for i in range(1):
