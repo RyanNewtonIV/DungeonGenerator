@@ -199,22 +199,11 @@ if __name__ == '__main__':
 
 
 
-
-
-
-    #Old Screen Clearing Code:
-    #os.system('cls')
-    #print("\033[H\033[3J", end="")
-
     #Slowly Clear the Screen first so hack for redrawing frames works
     cls()
 
+    #Initizalize the Screen Buffer Dictionary
     screenBuffer = initializeGameWindowDict()
-
-    rectangleDict = asciiArtist.createRectangleDict(5, 5, 10, 10, " ", "Red", "Trans")
-    rectangleDict = asciiArtist.createRectangleDictExt(5, 5, 10, 10, " ", "Red", "Trans", "solidBlockSquareRoundedCorners", "Wht", "Trans")
-    #drawDicttoDict(rectangleDict,screenBuffer,rectangleDict['x'],rectangleDict['y'],rectangleDict['width'],rectangleDict['height'])
-    drawDicttoDict(rectangleDict, screenBuffer)
 
 
 
@@ -274,7 +263,7 @@ if __name__ == '__main__':
         # Draw the Mana Bar
         drawDicttoDict(asciiArtist.createStatusBar(2, 2 + scalingStatusbars,statusBarGetClampedValue(maxmp, UImaxMPBarAmountClamping,consoleMidX - 2), scalingStatusbars, mp,maxmp, "Blu", "|", "DkGry", "Bk-Blk"), screenBuffer)
 
-        # Draw the Heatlh Bar
+        # Draw the Stamina Bar
         drawDicttoDict(asciiArtist.createStatusBar(2, 2 + scalingStatusbars * 2,statusBarGetClampedValue(maxst, UImaxStBarAmountClamping,consoleMidX - 2), scalingStatusbars, st,maxst, "Grn", "|", "DkGry", "Bk-Blk"), screenBuffer)
 
         #Draw the Inventory
@@ -282,6 +271,27 @@ if __name__ == '__main__':
         drawDicttoDict(asciiArtist.createRectangleDictExt(8, consoleHeight - 17, 5, 5, "█", "Blk", "Bk-Blk","singleLine","DkGry","Bk-Blk"), screenBuffer)
         drawDicttoDict(asciiArtist.createRectangleDictExt(14, consoleHeight - 12, 5, 5, "█", "Blk", "Bk-Blk","singleLine","DkGry","Bk-Blk"), screenBuffer)
         drawDicttoDict(asciiArtist.createRectangleDictExt(8, consoleHeight - 7, 5, 5, "█", "Blk", "Bk-Blk","singleLine","DkGry","Bk-Blk"), screenBuffer)
+
+        #Draw a Sword Hack
+        drawDicttoDict(asciiArtist.createStringDict("\\",16,consoleHeight-11,"Wht","Trans"),screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("║", 16, consoleHeight - 10, "Wht", "Trans"),screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("T", 16, consoleHeight - 9, "Wht", "Trans"),screenBuffer)
+
+        # Draw a Shield Hack
+        drawDicttoDict(asciiArtist.createStringDict("|", 3, consoleHeight - 10, "Wht", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("_", 4, consoleHeight - 11, "Wht", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("░", 4, consoleHeight - 10, "Wht", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("|", 5, consoleHeight - 10, "Wht", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("v", 4, consoleHeight - 9, "Wht", "Trans"), screenBuffer)
+
+        # Draw Estus Flask Hack
+        drawDicttoDict(asciiArtist.createStringDict("_", 10, consoleHeight - 6, "LtYel", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("/", 9, consoleHeight - 5, "LtYel", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("█", 10, consoleHeight - 5, "Yel", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("\\", 11, consoleHeight - 5, "LtYel", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("└", 9, consoleHeight - 4, "LtYel", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("▀", 10, consoleHeight - 4, "Yel", "Trans"), screenBuffer)
+        drawDicttoDict(asciiArtist.createStringDict("┘", 11, consoleHeight - 4, "LtYel", "Trans"), screenBuffer)
 
         #Test the Healthbar
         hp -= .1
