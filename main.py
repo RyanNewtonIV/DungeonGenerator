@@ -348,6 +348,8 @@ if __name__ == '__main__':
         fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
         drawDicttoDict(fpsDict,screenBuffer)
         #Print Screen Buffer to Console
+
+        continue
         sys.stdout.write(returnFrameStringFromDict(screenBuffer))
 
 
