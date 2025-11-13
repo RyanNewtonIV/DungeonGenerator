@@ -191,6 +191,8 @@ if __name__ == '__main__':
     st = 100
     numberOfSouls = 0
 
+    quicktimeTicker = 0
+
 
     #Dividor for the number of vertical characters to scale the status bars
     statusbarsScalingFactor = 36
@@ -205,12 +207,23 @@ if __name__ == '__main__':
     #Initizalize the Screen Buffer Dictionary
     screenBuffer = initializeGameWindowDict()
 
+    #Variables for Handling the fluctuating frame rate.
+    #Multiplier to be paired with actions that happen over a certain number of frames
+    timeFPSModifier = 0
+    #Time Variables
+    time1 = time.time()
+    time2 = time.time()
+
 
 
 
 
     #PRIMARY GAME LOOP
     while (exitFlag == False):
+
+        time2 = time.time()
+        modifierTimer = time2 - time1
+        time1 = time2
 
         screenBuffer = initializeGameWindowDict()
 
@@ -293,25 +306,34 @@ if __name__ == '__main__':
         drawDicttoDict(asciiArtist.createStringDict("▀", 10, consoleHeight - 4, "Yel", "Trans"), screenBuffer)
         drawDicttoDict(asciiArtist.createStringDict("┘", 11, consoleHeight - 4, "LtYel", "Trans"), screenBuffer)
 
+
+        #Draw the Quicktime Event Bar
+        drawDicttoDict(asciiArtist.createRectangleDictExt(consoleMidX-22,consoleMidY-scalingStatusbars-1,44, scalingStatusbars+5," ","Wht","Trans","solidBlockSquare","DkGry","Trans"),screenBuffer)
+        drawDicttoDict(asciiArtist.createStatusBar(consoleMidX-20,consoleMidY-scalingStatusbars,40, scalingStatusbars+3, quicktimeTicker,100, "Blu", " ", "Trans", "Trans"), screenBuffer)
+
         #Test the Healthbar
-        hp -= .1
+        hp -= 40*modifierTimer
         if hp < 0:
             hp = maxhp
-        mp -= .1
+        mp -= 200*modifierTimer
         if mp < 0:
             mp = maxmp
-        st -= .1
+        st -= 80*modifierTimer
         if st < 0:
             st = maxst
         if st > maxst:
             st = 0
+        quicktimeTicker += 100*modifierTimer
+        if quicktimeTicker > 100:
+            quicktimeTicker = 0
 
         numberOfSouls += 10
         soulsString = "Souls: "+str(numberOfSouls)
         UISoulsDrawAnchorX = consoleWidth-len(soulsString)-4
         UISoulsDrawAnchorY = consoleHeight - 4
-        drawDicttoDict(asciiArtist.createRectangleDictExt(UISoulsDrawAnchorX,UISoulsDrawAnchorY,len(soulsString)+2,3,"█","Blk","Bk-Blk","singleLine","Wht","Bk-Blk"),screenBuffer)
+        drawDicttoDict(asciiArtist.createRectangleDictExt(UISoulsDrawAnchorX,UISoulsDrawAnchorY,len(soulsString)+2,3,"█","Blk","Trans","singleLine","Wht","Bk-Blk"),screenBuffer)
         drawDicttoDict(asciiArtist.createStringDict(soulsString,UISoulsDrawAnchorX+1,UISoulsDrawAnchorY+1,"Wht","Bk-Blk"),screenBuffer)
+        drawStringToDict(screenBuffer,str(modifierTimer),30,30)
 
 
         #Handling Calculating and Drawing FPS
@@ -327,6 +349,7 @@ if __name__ == '__main__':
         drawDicttoDict(fpsDict,screenBuffer)
         #Print Screen Buffer to Console
         sys.stdout.write(returnFrameStringFromDict(screenBuffer))
+
 
 
     # Old Code to Draw My Cave Maps
