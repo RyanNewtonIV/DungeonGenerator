@@ -59,6 +59,9 @@ class AsciiCharacter():
         self.properties['underline'] = underline
 
 
+    def getDictIndexString(self):
+        return str(str(self.properties["x"])+","+ str(self.properties["y"]))
+
     def getPropertiesDict(self):
         return self.properties
 
@@ -163,6 +166,38 @@ class AsciiArtGenerator():
                 returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, fillCharacter, fillCharColor, fillCharBackgroundColor, False, False)
 
         return returnAsciiSpriteDict
+
+
+    def createRectangleBorderArray(self,x, y, width, height, borderType, borderCharColor, borderCharBkColor):
+        returnAsciiSpriteArr = []
+        xbounds = x + width - 1
+        ybounds = y + height - 1
+
+        if borderType == "doubleLine":
+
+            for j in range(y, height + y):
+                for i in range(x, width + x):
+                    if i == x and j == y:
+                        returnAsciiSpriteArr.append(AsciiCharacter(i, j, "╔", borderCharColor,
+                                                                            borderCharBkColor, False, False))
+                    elif i == xbounds and j == y:
+                        returnAsciiSpriteArr.append(AsciiCharacter(i, j, "╗", borderCharColor,
+                                                                            borderCharBkColor, False, False))
+                    elif i == x and j == ybounds:
+                        returnAsciiSpriteArr.append(AsciiCharacter(i, j, "╚", borderCharColor,
+                                                                            borderCharBkColor, False, False))
+                    elif i == xbounds and j == ybounds:
+                        returnAsciiSpriteArr.append(AsciiCharacter(i, j, "╝", borderCharColor,
+                                                                            borderCharBkColor, False, False))
+                    elif i == x or i == xbounds:
+                        returnAsciiSpriteArr.append(AsciiCharacter(i, j, "║", borderCharColor,
+                                                                            borderCharBkColor, False, False))
+                    elif j == y or j == ybounds:
+                        returnAsciiSpriteArr.append(AsciiCharacter(i, j, "═", borderCharColor,
+                                                                            borderCharBkColor, False, False))
+                    else:
+                        pass
+            return returnAsciiSpriteArr
 
     def createRectangleDictExt(self, x, y, width, height, fillCharacter, fillCharColor, fillCharBkColor, borderType, borderCharColor, borderCharBkColor):
 

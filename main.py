@@ -102,6 +102,12 @@ def drawDicttoDict(dictToDraw, dictToDrawTo):
                     dictToDraw[indexString].getPropertiesDict()["backgroundColor"] = dictToDrawTo[indexString].getPropertiesDict()["backgroundColor"]
                 dictToDrawTo[indexString] = dictToDraw[indexString]
 
+def drawArraytoDict(arrayToDraw, dictToDrawTo):
+    for i in arrayToDraw:
+        if i.getPropertiesDict()["backgroundColor"] == "Trans":
+            i.getPropertiesDict()["backgroundColor"] = dictToDrawTo[i.getDictIndexString()].getPropertiesDict()["backgroundColor"]
+        dictToDrawTo[i.getDictIndexString()] = i
+
 def statusBarGetClampedValue(maxstat,clampingAmount,maxWidth):
     if maxstat < clampingAmount:
         return int(maxWidth*(maxstat/clampingAmount))
@@ -114,6 +120,12 @@ def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
 
 def getLatencyString():
     pass
+
+def printScreenBuffer():
+    sys.stdout.write(returnFrameStringFromDict(screenBuffer))
+    sys.stdout.flush()
+
+
 
 
 if __name__ == '__main__':
@@ -217,17 +229,17 @@ if __name__ == '__main__':
 
 
 
-
     #PRIMARY GAME LOOP
     while (exitFlag == False):
+
 
         time2 = time.time()
         modifierTimer = time2 - time1
         time1 = time2
 
-        screenBuffer = initializeGameWindowDict()
 
-        #Flag Console Resize
+
+        #Flag Console Resize and Clear Screen
         if (flagConsoleResize(consoleWidth,consoleHeight)):
             testvar = os.get_terminal_size().lines - HeightOffset
             if consoleHeight != testvar:
@@ -240,6 +252,8 @@ if __name__ == '__main__':
                 consoleWidth = testvar
                 consoleMidX = int(testvar / 2)
                 cls()
+            screenBuffer = initializeGameWindowDict()
+        else:
             screenBuffer = initializeGameWindowDict()
 
         #Input Handling
@@ -268,7 +282,10 @@ if __name__ == '__main__':
             break
 
         #Draw the Game Window Borders
-        drawDicttoDict(asciiArtist.createRectangleDictExt(0,0,consoleWidth,consoleHeight," ","Trans","Trans","doubleLine","Wht","Trans"),screenBuffer)
+        #drawDicttoDict(asciiArtist.createRectangleDictExt(0,0,consoleWidth,consoleHeight," ","Trans","Trans","doubleLine","Wht","Trans"),screenBuffer)
+        drawArraytoDict(asciiArtist.createRectangleBorderArray(0, 0, consoleWidth, consoleHeight, "doubleLine","Wht", "Trans"),screenBuffer)
+        #print(asciiArtist.createRectangleBorderArray(0, 0, consoleWidth, consoleHeight, "doubleLine","Wht", "Trans"))
+        #time.sleep(2)
 
         #Draw the Heatlh Bar
         drawDicttoDict(asciiArtist.createStatusBar(2, 2, statusBarGetClampedValue(maxhp, UImaxHPBarAmountClamping, consoleMidX - 2), scalingStatusbars, hp, maxhp, "Red","|","DkGry","Bk-Blk"),screenBuffer)
@@ -347,10 +364,13 @@ if __name__ == '__main__':
         #drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
         fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
         drawDicttoDict(fpsDict,screenBuffer)
-        #Print Screen Buffer to Console
 
-        continue
+        #Print Screen Buffer to Console
         sys.stdout.write(returnFrameStringFromDict(screenBuffer))
+        sys.stdout.flush()
+
+
+
 
 
 
