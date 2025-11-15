@@ -7,6 +7,8 @@ import os
 import sys
 import keyboard
 from windowsConsoleGraphics import AsciiArtGenerator, AsciiCharacter
+import threading
+import asyncio
 
 
 def cls(n = 0):
@@ -128,6 +130,7 @@ def printScreenBuffer():
 
 
 
+
 if __name__ == '__main__':
     #Fixes Screen Flickering:
     os.system("")
@@ -231,6 +234,8 @@ if __name__ == '__main__':
 
     #PRIMARY GAME LOOP
     while (exitFlag == False):
+
+        #threading.Thread(target=printScreenBuffer(), daemon=True)
 
 
         time2 = time.time()
@@ -362,12 +367,16 @@ if __name__ == '__main__':
             starttime = time.time()
         fpsString = "|FPS:"+str(fps) + "|" + str(consoleWidth) +"x" + str(consoleHeight)+"|"+str(consoleWidth*consoleHeight)+"units|"
         #drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
+
+
         fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
         drawDicttoDict(fpsDict,screenBuffer)
 
         #Print Screen Buffer to Console
         sys.stdout.write(returnFrameStringFromDict(screenBuffer))
         sys.stdout.flush()
+
+
 
 
 
