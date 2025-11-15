@@ -116,6 +116,11 @@ def statusBarGetClampedValue(maxstat,clampingAmount,maxWidth):
     else:
         return int(maxWidth)
 
+def returnFrameTimeString(processLabelString):
+        processTime = time.time()-timeKeeper
+        framePercentage = processTime/(1/fps)*100
+        return f"{processLabelString}: {framePercentage:.4f}% | {processTime:,.4f}(s)"
+
 
 def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
     pass
@@ -137,7 +142,7 @@ if __name__ == '__main__':
 
     print(sys.path)
     print(os.getcwd())
-    timeKepper = time.time()
+    timeKeeper = time.time()
     rand = Random()
     seed = rand.randint(0, 100000)
     width = 280
@@ -175,7 +180,7 @@ if __name__ == '__main__':
     #GameProperties
     exitFlag =False
     starttime = time.time()
-    fps = 0
+    fps = 1
     fpsflag = 0
     HeightOffset = 0
     WidthOffset = 0
@@ -229,20 +234,24 @@ if __name__ == '__main__':
     time1 = time.time()
     time2 = time.time()
 
+    frameInfoStrings = []
+
 
 
 
     #PRIMARY GAME LOOP
     while (exitFlag == False):
 
+
         #threading.Thread(target=printScreenBuffer(), daemon=True)
 
-
+        #Variables for Time Related modifications with variable frame rates
         time2 = time.time()
         modifierTimer = time2 - time1
         time1 = time2
 
 
+        timeKeeper = time.time()
 
         #Flag Console Resize and Clear Screen
         if (flagConsoleResize(consoleWidth,consoleHeight)):
@@ -260,6 +269,9 @@ if __name__ == '__main__':
             screenBuffer = initializeGameWindowDict()
         else:
             screenBuffer = initializeGameWindowDict()
+
+        frameInfoStrings.append(returnFrameTimeString("Initialize the Console"))
+
 
         #Input Handling
         try:
@@ -372,9 +384,18 @@ if __name__ == '__main__':
         fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
         drawDicttoDict(fpsDict,screenBuffer)
 
+        counter = 0
+        for i in range(0,len(frameInfoStrings)):
+            drawStringToDict(screenBuffer,frameInfoStrings.pop(0),10,20+counter)
+            counter += 1
+
+
+        timeKeeper = time.time()
         #Print Screen Buffer to Console
         sys.stdout.write(returnFrameStringFromDict(screenBuffer))
         sys.stdout.flush()
+        frameInfoStrings.append(returnFrameTimeString("Compile String and Draw Methods"))
+
 
 
 
