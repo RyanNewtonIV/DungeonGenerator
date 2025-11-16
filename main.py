@@ -35,6 +35,11 @@ def initializeGameWindowDict():
 
     return gameWindowDict
 
+
+def initializeGameWindowDictFast(char):
+    for key in screenBuffer:
+        screenBuffer[key].reInitialize(char)
+
 def drawGameWindowBorders():
     pass
 
@@ -104,7 +109,7 @@ def statusBarGetClampedValue(maxstat,clampingAmount,maxWidth):
 def returnFrameTimeString(processLabelString):
         processTime = time.time()-timeKeeper
         framePercentage = processTime/(1/fps)*100
-        return f"{processLabelString}: {framePercentage:.4f}% | {processTime:,.4f}(s)"
+        return f"{processLabelString}: {framePercentage:.1f}% | {processTime:,.4f}(s)"
 
 
 def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
@@ -221,6 +226,9 @@ if __name__ == '__main__':
 
     frameInfoStrings = []
 
+    #Toggles drawing the latency for certain methods
+    showLatencyValues = True
+
 
 
 
@@ -253,8 +261,7 @@ if __name__ == '__main__':
                 cls()
             screenBuffer = initializeGameWindowDict()
         else:
-            screenBuffer = initializeGameWindowDict()
-
+            initializeGameWindowDictFast(" ")
         frameInfoStrings.append(returnFrameTimeString("Initialize the Console"))
 
 
@@ -352,7 +359,6 @@ if __name__ == '__main__':
         UISoulsDrawAnchorY = consoleHeight - 4
         drawDicttoDict(asciiArtist.createRectangleDictExt(UISoulsDrawAnchorX,UISoulsDrawAnchorY,len(soulsString)+2,3,"█","Blk","Trans","singleLine","Wht","Bk-Blk"),screenBuffer)
         drawDicttoDict(asciiArtist.createStringDict(soulsString,UISoulsDrawAnchorX+1,UISoulsDrawAnchorY+1,"Wht","Bk-Blk"),screenBuffer)
-        drawStringToDict(screenBuffer,str(modifierTimer),30,30)
 
 
         #Handling Calculating and Drawing FPS
@@ -363,16 +369,17 @@ if __name__ == '__main__':
             fpsflag = 0
             starttime = time.time()
         fpsString = "|FPS:"+str(fps) + "|" + str(consoleWidth) +"x" + str(consoleHeight)+"|"+str(consoleWidth*consoleHeight)+"units|"
-        #drawStringToDict(screenBuffer,fpsString,1,consoleHeight-1)
-
-
         fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
         drawDicttoDict(fpsDict,screenBuffer)
 
-        counter = 0
-        for i in range(0,len(frameInfoStrings)):
-            drawStringToDict(screenBuffer,frameInfoStrings.pop(0),10,20+counter)
-            counter += 1
+
+        #Draw Latency Calculations
+        if (showLatencyValues):
+            counter = 0
+            for i in range(0,len(frameInfoStrings)):
+                drawStringToDict(screenBuffer,frameInfoStrings.pop(0),2,9+counter)
+                counter += 1
+            drawStringToDict(screenBuffer, f"Total Frame Time: {modifierTimer:,.4f}", 2, 9+counter)
 
 
         timeKeeper = time.time()
@@ -383,7 +390,7 @@ if __name__ == '__main__':
         timeKeeper = time.time()
         sys.stdout.write(screenBufferString)
         sys.stdout.flush()
-        frameInfoStrings.append(returnFrameTimeString("Compile String and Draw Methods"))
+        frameInfoStrings.append(returnFrameTimeString("Outputting to the Console"))
 
 
 

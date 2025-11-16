@@ -3,6 +3,8 @@ import time
 
 class AsciiCharacter():
 
+
+
     COLOR = {
         "ESCAPECODE-Octal": "\033",
         "ESCAPECODE-Unicode": "\u001b",
@@ -58,6 +60,12 @@ class AsciiCharacter():
         self.properties['bold'] = bold
         self.properties['underline'] = underline
 
+    def reInitialize(self,char):
+        self.properties['charSymbol'] = char
+        self.properties['txtColor'] = "Wht"
+        self.properties['backgroundColor'] = "Trans"
+        self.properties['bold'] = False
+        self.properties['underline'] = False
 
     def getDictIndexString(self):
         return str(str(self.properties["x"])+","+ str(self.properties["y"]))
