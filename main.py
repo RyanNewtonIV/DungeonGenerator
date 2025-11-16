@@ -39,35 +39,20 @@ def drawGameWindowBorders():
     pass
 
 def returnFrameStringFromDict(dictionaryToConvert):
-    frameString = ""
+    stringArray = []
 
     for j in range(0, consoleHeight):
         for i in range(0, consoleWidth):
 
             indexAsciiObject = str(i) + "," + str(j)
-            frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
-
-            # Broken attempt at optomization
-            # if i != 0 and j != 0:
-            #     if i > 0:
-            #         prevIndexAsciiObject = str(i-1) + "," + str(j)
-            #     else:
-            #         frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
-            #         pass
-            #
-            #     if dictionaryToConvert[indexAsciiObject].getProperties() == dictionaryToConvert[prevIndexAsciiObject].getProperties():
-            #         frameString += dictionaryToConvert[indexAsciiObject].getCharacterSimple()
-            #     else:
-            #         frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
-            # else:
-            #     frameString += dictionaryToConvert[indexAsciiObject].getCharacterString()
-
+            stringArray.append(dictionaryToConvert[indexAsciiObject].getCharacterString())
 
         if j < consoleHeight - 1:
-            frameString += str("\n")
+            #frameString += str("\n")
+            stringArray.append("\n")
 
-
-    frameString += str("\033[H\033[3J\033[0m")
+    stringArray.append("\033[H\033[3J\033[0m")
+    frameString = "".join(stringArray)
     return frameString
 
 def flagConsoleResize(consoleWidth,consoleHeight):
@@ -392,7 +377,11 @@ if __name__ == '__main__':
 
         timeKeeper = time.time()
         #Print Screen Buffer to Console
-        sys.stdout.write(returnFrameStringFromDict(screenBuffer))
+        screenBufferString = returnFrameStringFromDict(screenBuffer)
+        frameInfoStrings.append(returnFrameTimeString("String Conversion"))
+
+        timeKeeper = time.time()
+        sys.stdout.write(screenBufferString)
         sys.stdout.flush()
         frameInfoStrings.append(returnFrameTimeString("Compile String and Draw Methods"))
 
