@@ -45,13 +45,10 @@ def drawGameWindowBorders():
 
 def returnFrameStringFromDict(dictionaryToConvert):
     stringArray = []
-
     for j in range(0, consoleHeight):
         for i in range(0, consoleWidth):
-
             indexAsciiObject = str(i) + "," + str(j)
             stringArray.append(dictionaryToConvert[indexAsciiObject].getCharacterString())
-
         if j < consoleHeight - 1:
             #frameString += str("\n")
             stringArray.append("\n")
