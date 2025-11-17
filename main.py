@@ -7,6 +7,7 @@ import os
 import sys
 import keyboard
 from windowsConsoleGraphics import AsciiArtGenerator, AsciiCharacter
+from performanceMonitor import performanceMonitor
 import threading
 import asyncio
 
@@ -103,11 +104,6 @@ def statusBarGetClampedValue(maxstat,clampingAmount,maxWidth):
     else:
         return int(maxWidth)
 
-def returnFrameTimeString(processLabelString):
-        processTime = time.time()-timeKeeper
-        framePercentage = processTime/(1/fps)*100
-        return f"{processLabelString}: {framePercentage:.1f}% | {processTime:,.4f}(s)"
-
 
 def drawStringToDictExt(dict,string,x,y,alignH,alighV,wrapFlag):
     pass
@@ -129,7 +125,6 @@ if __name__ == '__main__':
 
     print(sys.path)
     print(os.getcwd())
-    timeKeeper = time.time()
     rand = Random()
     seed = rand.randint(0, 100000)
     width = 280
@@ -221,10 +216,12 @@ if __name__ == '__main__':
     time1 = time.time()
     time2 = time.time()
 
-    frameInfoStrings = []
+    #frameInfoStrings = []
 
     #Toggles drawing the latency for certain methods
     showLatencyValues = True
+
+    perfMon = performanceMonitor()
 
 
 
@@ -241,7 +238,7 @@ if __name__ == '__main__':
         time1 = time2
 
 
-        timeKeeper = time.time()
+        perfMon.startLogProcessTime("Initialize the Console:")
 
         #Flag Console Resize and Clear Screen
         if (flagConsoleResize(consoleWidth,consoleHeight)):
@@ -259,9 +256,11 @@ if __name__ == '__main__':
             screenBuffer = initializeGameWindowDict()
         else:
             initializeGameWindowDictFast(" ")
-        frameInfoStrings.append(returnFrameTimeString("Initialize the Console"))
+        #frameInfoStrings.append(returnFrameTimeString("Initialize the Console"))
+        perfMon.endLogProcessTime("Initialize the Console:")
 
 
+        perfMon.startLogProcessTime("Input Handling:")
         #Input Handling
         try:
             if keyboard.is_pressed('Esc'):
@@ -286,7 +285,9 @@ if __name__ == '__main__':
                     movementTimer = time.time()
         except:
             break
+        perfMon.endLogProcessTime("Input Handling:")
 
+        perfMon.startLogProcessTime("Draw Functions:")
         #Draw the Game Window Borders
         #drawDicttoDict(asciiArtist.createRectangleDictExt(0,0,consoleWidth,consoleHeight," ","Trans","Trans","doubleLine","Wht","Trans"),screenBuffer)
         drawArraytoDict(asciiArtist.createRectangleBorderArray(0, 0, consoleWidth, consoleHeight, "doubleLine","Wht", "Trans"),screenBuffer)
@@ -368,26 +369,28 @@ if __name__ == '__main__':
         fpsString = "|FPS:"+str(fps) + "|" + str(consoleWidth) +"x" + str(consoleHeight)+"|"+str(consoleWidth*consoleHeight)+"units|"
         fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
         drawDicttoDict(fpsDict,screenBuffer)
+        perfMon.endLogProcessTime("Draw Functions:")
 
 
-        #Draw Latency Calculations
+        # Draw Latency Calculations
         if (showLatencyValues):
             counter = 0
-            for i in range(0,len(frameInfoStrings)):
-                drawStringToDict(screenBuffer,frameInfoStrings.pop(0),2,9+counter)
+            for i in perfMon.returnAverageStringsList(fps):
+                drawStringToDict(screenBuffer,i,2,9+counter)
                 counter += 1
             drawStringToDict(screenBuffer, f"Total Frame Time: {modifierTimer:,.4f}", 2, 9+counter)
 
 
-        timeKeeper = time.time()
+        perfMon.startLogProcessTime("String Conversion:")
         #Print Screen Buffer to Console
         screenBufferString = returnFrameStringFromDict(screenBuffer)
-        frameInfoStrings.append(returnFrameTimeString("String Conversion"))
+        perfMon.endLogProcessTime("String Conversion:")
 
-        timeKeeper = time.time()
+
+        perfMon.startLogProcessTime("Console Output:")
         sys.stdout.write(screenBufferString)
         sys.stdout.flush()
-        frameInfoStrings.append(returnFrameTimeString("Outputting to the Console"))
+        perfMon.endLogProcessTime("Console Output:")
 
 
 
