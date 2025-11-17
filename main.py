@@ -216,8 +216,6 @@ if __name__ == '__main__':
     time1 = time.time()
     time2 = time.time()
 
-    #frameInfoStrings = []
-
     #Toggles drawing the latency for certain methods
     showLatencyValues = True
 
@@ -238,9 +236,10 @@ if __name__ == '__main__':
         time1 = time2
 
 
-        perfMon.startLogProcessTime("Initialize the Console:")
+
 
         #Flag Console Resize and Clear Screen
+        perfMon.startLogProcessTime("Initialize the Console:")
         if (flagConsoleResize(consoleWidth,consoleHeight)):
             testvar = os.get_terminal_size().lines - HeightOffset
             if consoleHeight != testvar:
@@ -256,7 +255,6 @@ if __name__ == '__main__':
             screenBuffer = initializeGameWindowDict()
         else:
             initializeGameWindowDictFast(" ")
-        #frameInfoStrings.append(returnFrameTimeString("Initialize the Console"))
         perfMon.endLogProcessTime("Initialize the Console:")
 
 
