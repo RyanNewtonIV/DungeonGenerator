@@ -10,6 +10,7 @@ from windowsConsoleGraphics import AsciiArtGenerator, AsciiCharacter
 from performanceMonitor import performanceMonitor
 import threading
 import asyncio
+import keyManager
 
 
 def cls(n = 0):
@@ -115,6 +116,8 @@ def printScreenBuffer():
     sys.stdout.write(returnFrameStringFromDict(screenBuffer))
     sys.stdout.flush()
 
+trackedKeys = {}
+
 
 
 
@@ -122,6 +125,9 @@ def printScreenBuffer():
 if __name__ == '__main__':
     #Fixes Screen Flickering:
     os.system("")
+
+    keymanager = keyManager.keyManager()
+
 
     print(sys.path)
     print(os.getcwd())
@@ -227,7 +233,6 @@ if __name__ == '__main__':
     #PRIMARY GAME LOOP
     while (exitFlag == False):
 
-
         #threading.Thread(target=printScreenBuffer(), daemon=True)
 
         #Variables for Time Related modifications with variable frame rates
@@ -260,29 +265,55 @@ if __name__ == '__main__':
 
         perfMon.startLogProcessTime("Input Handling:")
         #Input Handling
-        try:
-            if keyboard.is_pressed('Esc'):
-                print("\n\x1B[0myou pressed Esc, so exiting...")
-                exitFlag = True
-                #sys.exit(0)
-            if keyboard.is_pressed('d'):
-                if time.time() > movementTimer+movementflag:
-                    playerx += 1
-                    movementTimer = time.time()
-            if keyboard.is_pressed('a'):
-                if time.time() > movementTimer+movementflag:
-                    playerx -= 1
-                    movementTimer = time.time()
-            if keyboard.is_pressed('w'):
-                if time.time() > movementTimer+movementflag:
-                    playery -= 1
-                    movementTimer = time.time()
-            if keyboard.is_pressed('s'):
-                if time.time() > movementTimer+movementflag:
-                    playery += 1
-                    movementTimer = time.time()
-        except:
-            break
+        # try:
+        #     if keyboard.is_pressed('Esc'):
+        #         print("\n\x1B[0myou pressed Esc, so exiting...")
+        #         exitFlag = True
+        #         #sys.exit(0)
+        #     if keyboard.is_pressed('d'):
+        #         if time.time() > movementTimer+movementflag:
+        #             playerx += 1
+        #             movementTimer = time.time()
+        #     if keyboard.is_pressed('a'):
+        #         if time.time() > movementTimer+movementflag:
+        #             playerx -= 1
+        #             movementTimer = time.time()
+        #     if keyboard.is_pressed('w'):
+        #         if time.time() > movementTimer+movementflag:
+        #             playery -= 1
+        #             movementTimer = time.time()
+        #     if keyboard.is_pressed('s'):
+        #         if time.time() > movementTimer+movementflag:
+        #             playery += 1
+        #             movementTimer = time.time()
+        # except:
+        #     break
+
+        keymanager.keyUpdate()
+        if keymanager.checkKeyHeld('Esc'):
+            print("\n\x1B[0myou pressed Esc, so exiting...")
+            exitFlag = True
+            #sys.exit(0)
+        if keymanager.checkKeyPressed('d'):
+            playerx += 1
+            # if time.time() > movementTimer+movementflag:
+            #     playerx += 1
+            #     movementTimer = time.time()
+        if keymanager.checkKeyPressed('a'):
+            playerx -= 1
+            # if time.time() > movementTimer+movementflag:
+            #     playerx -= 1
+            #     movementTimer = time.time()
+        if keymanager.checkKeyPressed('w'):
+            playery -= 1
+            # if time.time() > movementTimer+movementflag:
+            #     playery -= 1
+            #     movementTimer = time.time()
+        if keymanager.checkKeyPressed('s'):
+            playery += 1
+            # if time.time() > movementTimer+movementflag:
+            #     playery += 1
+            #     movementTimer = time.time()
         perfMon.endLogProcessTime("Input Handling:")
 
         perfMon.startLogProcessTime("Draw Functions:")
@@ -368,6 +399,9 @@ if __name__ == '__main__':
         fpsDict = asciiArtist.createStringDict(fpsString,1,consoleHeight-1,"Wht","Bk-Blk")
         drawDicttoDict(fpsDict,screenBuffer)
         perfMon.endLogProcessTime("Draw Functions:")
+
+        #Draw the Player
+        drawStringToDict(screenBuffer,"X",playerx,playery)
 
 
         # Draw Latency Calculations
