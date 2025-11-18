@@ -294,6 +294,12 @@ if __name__ == '__main__':
             print("\n\x1B[0myou pressed Esc, so exiting...")
             exitFlag = True
             #sys.exit(0)
+
+        if keymanager.checkKeyHeld('d'):
+            if keymanager.getKeyHeldDuration('d') > 1:
+                if time.time() > movementTimer + movementflag:
+                    playerx += 1
+                    movementTimer = time.time()
         if keymanager.checkKeyPressed('d'):
             playerx += 1
             # if time.time() > movementTimer+movementflag:

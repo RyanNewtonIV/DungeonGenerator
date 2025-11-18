@@ -159,6 +159,44 @@ class AsciiArtGenerator():
 
         return returnAsciiSpriteDict
 
+    def getQuicktimeAttackBar(self,x,y,width,height,startTime,secondsForQuicktimeEvent, attacksDict, fillCharColor, emptyChar, emptyCharColor, charBackgroundColor):
+
+        timePassedSinceStart = time.time()-startTime
+        returnAsciiSpriteDict = {}
+        returnAsciiSpriteDict['x'] = x
+        returnAsciiSpriteDict['y'] = y
+        returnAsciiSpriteDict['width'] = width
+        returnAsciiSpriteDict['height'] = height
+        amountModifier = timePassedSinceStart/secondsForQuicktimeEvent
+        numberOfSquares = amountModifier*width
+        remainder = numberOfSquares % 1
+        numberOfFullSquares = int(numberOfSquares)
+
+        for j in range(y, height+y):
+            for i in range(x, width+x):
+                indexString = str(i) + "," + str(j)
+                if i-x < numberOfFullSquares:
+                    returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharColor, charBackgroundColor, False, False)
+                elif i-x == numberOfFullSquares:
+                    if remainder < .25:
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "░", fillCharColor, charBackgroundColor, False, False)
+                    elif remainder < .5:
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "▒", fillCharColor, charBackgroundColor, False, False)
+                    elif remainder < .75:
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "▓", fillCharColor, charBackgroundColor, False, False)
+                        # print(returnAsciiSpriteDict[indexString].getPropertiesString())
+                        # time.sleep(2)
+                    else:
+                        returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharColor, charBackgroundColor, False, False)
+                else:
+                    # returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, "█", fillCharBackgroundColor,fillCharBackgroundColor, False, False)
+                    returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, emptyChar, emptyCharColor,charBackgroundColor, False, False)
+
+                # if j > 0:
+                #     returnAsciiSpriteDict[indexString] = AsciiCharacter(i, j, str(i%10), fillCharBackgroundColor,fillCharBackgroundColor, False, False)
+
+        return returnAsciiSpriteDict
+
     def createRectangleDict(self, x, y, width, height, fillCharacter, fillCharColor, fillCharBackgroundColor):
 
         # Create Dictionary containing the Ascii Information

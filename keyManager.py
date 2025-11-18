@@ -15,7 +15,8 @@ class keyManager():
         for key in self.trackedKey:
             self.trackedKey[key] = {"Pressed": False,
             "Held": False,
-            "Released": False}
+            "Released": False,
+            "Time Pressed": 0.0}
 
     def keyUpdate(self):
         for key in self.trackedKey:
@@ -28,6 +29,8 @@ class keyManager():
                         self.trackedKey[key]["Pressed"] = False
                     else:
                         self.trackedKey[key]["Pressed"] = True
+                        self.trackedKey[key]["Time Pressed"] = time.time()
+
                 else:
                     if self.trackedKey[key]["Held"] == True or self.trackedKey[key]["Pressed"] == True:
                         self.trackedKey[key]["Released"] = True
@@ -46,3 +49,7 @@ class keyManager():
         return self.trackedKey[keyToCheck]["Held"]
     def checkKeyReleased(self,keyToCheck):
         return self.trackedKey[keyToCheck]["Released"]
+
+    def getKeyHeldDuration(self,keyToCheck):
+        return time.time()-self.trackedKey[keyToCheck]["Time Pressed"]
+
