@@ -234,7 +234,7 @@ class GameMap():
         return fillMap
 
     # By taking a Fill Map, finding the highest values in each area and then moving outwards
-    # we can generate a array that holds each room's set of coordinates as its values
+    # we can generate an array that holds each room's set of coordinates as its values
     def generateRoomMap(self, fillMapToUse):
         # Fill function
         None
@@ -476,6 +476,10 @@ class CombinedMap(GameMap):
     differentRegions = None
     allowedMapTypes = []
 
+    def createMapAreas(self,width,height,entryPoints,exitPoints):
+        #Need a function that will take a rectangle and subdivide it into different areas, filling as much of the rectangular area and creating connections between the different areas via entry/exit points.
+        pass
+
     def __init__(self, mapName, seed, width, height, entryPoints,exitPoints, differentRegions, allowedMapTypes):
         super().__init__(mapName, seed, width, height, entryPoints, exitPoints)
         self.differentRegions = differentRegions
@@ -530,3 +534,4 @@ class CombinedMap(GameMap):
 #                 elif (i[1] == self.height - 1):
 #
 #                 else:
+

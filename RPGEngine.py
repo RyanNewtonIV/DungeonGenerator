@@ -65,7 +65,8 @@ class AttackContainer():
     """
     def createNewAttackSequenceList(self,StringAttackName,numberOfStrikes,listOfAvailableAttackTypes,windUpTime,minSpacing,maxSpacing):
         newAttackList = []
-        attackSpacer = 0.0
+        attackSpacer = random.uniform(0,.2)
+        attackStart = random.uniform(.2,.7)
         for i in range(0,numberOfStrikes):
             baseDodgeWindow = random.uniform(0,.5)+.2
             baseParryWindow = random.uniform(0,.2)+.1
@@ -74,6 +75,21 @@ class AttackContainer():
             damageType = random.choice(listOfAvailableAttackTypes)
             newAttack = Attack(secstillAttackLands,baseDodgeWindow,baseParryWindow,)
             newAttackList.append(Attack())
+            attackSpacer += random.uniform(0,.2)
+
+    def DraftHandleEnemyAttack(self,attackList,enemyAttacking):
+        """
+        This method is called if a list containing different enemy attacks isn't empty
+
+        if attackListAttackStartTime == False
+            attackStartTime = time.time()
+
+
+        if KeyPressed "Dodge KeyBind:
+            for attack in attackList:
+                if time.time() > attackStartTime +
+        """
+
 
 
 
