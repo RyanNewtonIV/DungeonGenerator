@@ -1,6 +1,15 @@
+import random
 from random import Random
 import pygame
 from mapGenerator import GameMap, CaveMap
+
+
+def pyGameDrawMap(map, x,y,scale,color):
+    mapToPrint = map.getMap()
+    for j in range(len(mapToPrint[0])):
+        for i in range(len(mapToPrint)):
+            if mapToPrint[i][j] == 0:
+                pygame.draw.rect(screen, color, (x*scale+i * scale, y*scale+j * scale, 1 * scale, 1 * scale))
 
 
 if __name__ == '__main__':
@@ -9,9 +18,9 @@ if __name__ == '__main__':
     seed = rand.randint(0, 100000)
     width = 200
     height = 150
-    openNess = .4
-    smoothStep = 5
-    minRoomSize = 10
+    openNess = random.randint(1,20)/100+.45
+    smoothStep = random.randint(2,6)
+    minRoomSize = random.randint(8,12)
     entryPoints = []
     exitPoints = []
 
@@ -57,18 +66,16 @@ if __name__ == '__main__':
     BLUE = (0, 0, 255)
     PURPLE = (255, 0, 255)
 
-    scalingValue = 4
-
     run = True
-    mapToPrint = a.getMap()
-    for j in range(len(mapToPrint[0])):
-        for i in range(len(mapToPrint)):
-            if mapToPrint[i][j] == 0:
-                pygame.draw.rect(screen,BLUE,(i*scalingValue,j*scalingValue,1*scalingValue,1*scalingValue))
+
+    pyGameDrawMap(a,0,0,4,RED)
+
     while run:
 
+        #BLANK THE SCREEN:
         #screen.fill((0, 0, 0))
 
+        #EXAMPLE DRAW RECTANGLE FUNCTION:
         #pygame.draw.rect(screen, BLUE, (200, 150, 100, 50),15)
 
 
